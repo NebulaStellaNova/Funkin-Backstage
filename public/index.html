@@ -4,72 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Funkin' Backstage</title>
-  <style>
-    @font-face {
-      font-family: 'FunkinOptions';
-      src: url('fonts/FunkinOptions.otf') format('opentype');
-    }
-    @font-face {
-      font-family: 'FunkinLingLong';
-      src: url('fonts/FunkinLingLong.otf') format('opentype');
-    }
-    @font-face {
-      font-family: '5by7';
-      src: url('fonts/5by7.ttf') format('truetype');
-    }
-    @font-face {
-      font-family: 'DS-Digital';
-      src: url('fonts/DS-Digital.ttf') format('truetype');
-    }
-    @font-face {
-      font-family: 'Inconsolata ExtraBold';
-      src: url('fonts/Inconsolata ExtraBold.ttf') format('truetype');
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: url('bg.png') no-repeat center center / cover fixed;
-      color: #f0f0f0;
-    }
-
-    .container {
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 9rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    p {
-      font-size: 3.3rem;
-      color: #888;
-    }
-
-    .smooth-btn {
-      transform: scale(1); 
-      transition: transform 0.3s ease-out; 
-    }
-
-    .smooth-btn:hover {
-      transform: scale(1.05);
-    }
-
-  </style>
+  <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
   <div class="container">
@@ -81,5 +16,8 @@
     </div>
   </div>
   <p style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666;">© 2026 NebulaStellaNova — Fan-made, not affiliated with Newgrounds or The Funkin' Crew, Inc.</p>
+
+  <div class="irisEffect"></div>
+  <script src="script.js"></script>
 </body>
 </html>
