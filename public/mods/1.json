@@ -1,0 +1,11 @@
+{
+	"title": "Vs. Nucleon [DEMO]",
+	"description": "Can you survive the fallout, or will you melt under the pressure?",
+	"id": "vs-nucleon",
+	"download": "link",
+	"thumbnails": [
+        "https://images.gamebanana.com/img/ss/mods/6a361f991c13b.jpg"
+    ],
+    "parent": "base-game",
+    "child": "full-mod"
+}
