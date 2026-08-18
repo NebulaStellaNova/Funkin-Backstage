@@ -6,8 +6,77 @@
   <title>Funkin' Backstage | Mods</title>
   <link rel="icon" type="image/png" href="../favicon.png">
   <link rel="stylesheet" href="../style.css" type="text/css">
+  <link rel="stylesheet" href="style.css" type="text/css">
 </head>
   <body>
+    <h1 style="font-family: 'FunkinLingLong', sans-serif; position: fixed; left: 2rem; top: 1rem; font-size: 5rem;">Funkin' Backstage - Mods</h1>
+    <div style="display: flex; flex-direction: column; row-gap: 15px; position: fixed; top: 9rem; left: 2rem;">
+      <div class="mod-box" id="mod-box-1" style="width: 25vw;">
+        <div class="mod-box-header">
+          <h1 style="font-size: 3vh;">CATEGORY - ANY</h1>
+          <div style="flex: 1;"></div>
+          <img src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-1')">
+        </div>
+        <div class="mod-box-content" style="padding-left: 5%">
+          <div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
+          <h1 style="font-size: 3vh;">Full Mods</h1>
+          <h1 style="font-size: 3vh;">Ports</h1>
+          <h1 style="font-size: 3vh;">Scripts</h1>
+        </div>
+      </div>
+      <div class="mod-box" id="mod-box-2" style="width: 25vw;">
+        <div class="mod-box-header">
+          <h1 style="font-size: 3vh;">ENGINE - ANY</h1>
+          <div style="flex: 1;"></div>
+          <img src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-2')">
+        </div>
+        <div class="mod-box-content" style="padding-left: 5%">
+          <div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
+          <h1 style="font-size: 3vh;">Base Game</h1>
+          <h1 style="font-size: 3vh;">Codename Engine</h1>
+          <h1 style="font-size: 3vh;">Psych Engine</h1>
+          <h1 style="font-size: 3vh;">Kade Engine</h1>
+          <h1 style="font-size: 3vh;">Other</h1>
+        </div>
+      </div>
+      <div class="mod-box" id="mod-box-3" style="width: 25vw;">
+        <div class="mod-box-header">
+          <h1 style="font-size: 3vh;">FILTERS</h1>
+          <div style="flex: 1;"></div>
+          <img src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-3')">
+        </div>
+        <div class="mod-box-content" style="padding-left: 5%">
+          <div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
+          <div style="display: flex; flex-direction: row; align-items: center; gap: 0.75rem; width: 100%">
+            <img class="check-box" src="assets/checkbox-empty.png" style="height: 2.5vh; cursor: pointer;" onclick="toggleTick(this)">
+            <h1 style="font-size: 3vh; line-height: 1; margin-top: 0.6rem;">Featured</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function toggleTick(img) {
+        img.classList.toggle('selected');
+        img.src = img.classList.contains('selected') ? 'assets/checkbox-filled.png' : 'assets/checkbox-empty.png';
+      }
+
+      function toggleBox(btn, boxId) {
+        const box = document.getElementById(boxId);
+        const isExpanding = !box.classList.contains('expanded');
+
+        document.querySelectorAll('.mod-box.expanded').forEach(b => {
+          b.classList.remove('expanded');
+          b.style.height = '';
+          b.querySelector('.dropdown-arrow').classList.remove('flipped');
+        });
+
+        if (isExpanding) {
+          box.style.height = box.scrollHeight + 'px';
+          box.classList.add('expanded');
+          btn.classList.add('flipped');
+        }
+      }
+    </script>
     <p style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666;">© 2026 NebulaStellaNova — Fan-made, not affiliated with Newgrounds or The Funkin' Crew, Inc.</p>
   </body>
 </html>
