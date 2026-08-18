@@ -1,9 +1,17 @@
 {
-  "title": "Vs. Nucleon [DEMO]",
-  "description": "Can you survive the fallout, or will you melt under the pressure?",
-  "id": "vs-nucleon",
-  "download": "link",
-  "thumbnails": ["https://images.gamebanana.com/img/ss/mods/6a361f991c13b.jpg"],
+	"title": "Vs. Nucleon [DEMO]",
+	"description": "Can you survive the fallout, or will you melt under the pressure?",
+	"id": "vs-nucleon",
+	"download": "link",
+	"thumbnails": [
+    "https://images.gamebanana.com/img/ss/mods/6a361f991c13b.jpg"
+  ],
   "parent": "base-game",
-  "child": "full-mod"
+  "child": "full-mod",
+	"uploadDate": "2026-08-04T23:45:02.000Z",
+	"updateDate": "2026-08-13T13:15:12.000Z",
+
+	"downloads": 4417,
+	"likes": 40,
+	"views": 4924
 }
