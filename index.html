@@ -14,7 +14,7 @@
     <h1 style="font-family: 'FunkinLingLong', sans-serif;">Funkin' Backstage</h1>
     <p style="font-family: 'FunkinOptions', sans-serif;">For Modders. By Modders. <i><u>NO</u></i> Automation.</p>
     <div style="display: block; margin: 1rem auto 0;">
-      <a href="/mods">
+      <a href="/mods/index.html">
         <img src="discover mods.png" class="smooth-btn" alt="Discover Mods" style="height: 4rem; margin-right: 10px; cursor: pointer;">
       </a>      <img src="sign-up.png" class="smooth-btn" alt="Discover Mods" style="height: 4rem; margin-left: 10px; cursor: pointer;">
     </div>
@@ -23,5 +23,22 @@
 
   <div class="irisEffect" style="z-index: 5000;"></div>
   <script src="script.js"></script>
+  <script>
+    async function name() {
+      var username = "Server"
+      var password = "ILoveGamebanana";
+      const res = await fetch('http://reminded-decree.tun.ply.gg:5891/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // sends/receives cookies for session auth
+        body: JSON.stringify({ username, password })
+      });
+  
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      console.log(data);
+    }
+    name();
+  </script>
 </body>
 </html>
