@@ -31,7 +31,11 @@
 		</div>
         <p id="error-msg" style="font-family: 'FunkinOptions', sans-serif; font-size: 2vh; color: #ff6b6b; display: none;"></p>
     </body>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="../api.js"></script>
 	<script>
+		const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 		function toggleShowPassword(img) {
 			img.classList.toggle('selected');
 			const showing = img.classList.contains('selected');
@@ -39,37 +43,23 @@
 			document.getElementById('password-input').type = showing ? 'text' : 'password';
 		}
 
-        async function testMe() {
-            const token = localStorage.getItem('token');
-            const res = await fetch('https://defective-motto-trillion.ngrok-free.dev/api/me', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({})
-            });
-            const data = await res.json();
-            console.log('/api/me:', data);
-        }
-
         async function login() {
             const errorMsg = document.getElementById('error-msg');
             errorMsg.style.display = 'none';
 
-            var username = document.querySelector('#username-box input').value;
-            var password = document.querySelector('#password-box input').value;
+            const username = document.querySelector('#username-box input').value.trim();
+            const password = document.querySelector('#password-box input').value;
 
-            const res = await fetch('https://defective-motto-trillion.ngrok-free.dev/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
+            const { error } = await _supabase.auth.signInWithPassword({
+                email: `${username}@funkin-backstage.local`,
+                password
             });
 
-            const data = await res.json();
-            if (!res.ok) {
-                errorMsg.textContent = data.message;
+            if (error) {
+                errorMsg.textContent = 'Invalid username or password';
                 errorMsg.style.display = 'block';
                 return;
             }
-            localStorage.setItem('token', data.token);
             window.location.href = '../';
         }
 	</script>

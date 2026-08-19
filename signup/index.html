@@ -32,7 +32,11 @@
 		</div>
         <p id="error-msg" style="font-family: 'FunkinOptions', sans-serif; font-size: 2vh; color: #ff6b6b; display: none;"></p>
     </body>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="../api.js"></script>
 	<script>
+		const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 		function toggleShowPassword(img) {
 			img.classList.toggle('selected');
 			const showing = img.classList.contains('selected');
@@ -44,21 +48,26 @@
             const errorMsg = document.getElementById('error-msg');
             errorMsg.style.display = 'none';
 
-            var username = document.querySelector('#username-box input').value;
-            var password = document.querySelector('#password-box input').value;
-            const res = await fetch('https://defective-motto-trillion.ngrok-free.dev/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
+            const username = document.querySelector('#username-box input').value.trim();
+            const password = document.querySelector('#password-box input').value;
 
-            const data = await res.json();
-            if (!res.ok) {
-                errorMsg.textContent = data.message;
+            if (!username || !password) {
+                errorMsg.textContent = 'Username and password required';
                 errorMsg.style.display = 'block';
                 return;
             }
-            localStorage.setItem('token', data.token);
+
+            const { error } = await _supabase.auth.signUp({
+                email: `${username}@funkin-backstage.local`,
+                password,
+                options: { data: { username } }
+            });
+
+            if (error) {
+                errorMsg.textContent = error.message.includes('already registered') ? 'Username already taken' : error.message;
+                errorMsg.style.display = 'block';
+                return;
+            }
             window.location.href = '../';
         }
 	</script>

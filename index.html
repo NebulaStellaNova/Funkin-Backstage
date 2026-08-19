@@ -23,18 +23,15 @@
 
   <div class="irisEffect" style="z-index: 5000;"></div>
   <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="api.js"></script>
   <script>
     (async function() {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      const res = await fetch('https://defective-motto-trillion.ngrok-free.dev/api/me', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({})
-      });
-      if (res.ok) {
+      const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { data: { session } } = await _supabase.auth.getSession();
+      if (session) {
         const signUpBtn = document.querySelector('img[src="sign-up.png"]');
-        if (signUpBtn) signUpBtn.remove();
+        if (signUpBtn) signUpBtn.closest('a').remove();
       }
     })();
   </script>
