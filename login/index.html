@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Funkin' Backstage | Mods</title>
+		<link rel="icon" type="image/png" href="../favicon.png">
+		<link rel="stylesheet" href="../style.css" type="text/css">
+		<link rel="stylesheet" href="../mods/style.css" type="text/css">
+        <style>
+            .login-link { color: #C7C7C7; text-decoration: none; }
+            .login-link:hover { color: #E1E1E1; text-decoration: underline; }
+        </style>
+	</head>
+
+	<body style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; height: 100vh; margin: 0;">
+        <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 5vh;">Welcome back to Funkin' Backstage!</h1>
+        <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 3vh; margin-top: -1rem; color: #C7C7C7;">Login to your account here</h1>
+        <div class="mod-box" id="username-box" style="flex-direction: row; align-items: center; height: 7vh; width: 30vw; padding: 0 1.5rem 0 3rem; gap: 0.75rem;">
+			<input type="text" placeholder="USERNAME" style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 3vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 0.2rem;" />
+		</div>
+        <div class="mod-box" id="password-box" style="flex-direction: row; align-items: center; height: 7vh; width: 30vw; padding: 0 1.5rem 0 3rem; gap: 0.75rem;">
+			<input id="password-input" type="password" placeholder="PASSWORD" style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 3vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 0.2rem;" />
+		</div>
+		<div style="display: flex; flex-direction: row; align-items: center; gap: 0.75rem;">
+			<img draggable="false" class="check-box" src="../mods/assets/checkbox-empty.png" style="height: 2.5vh; cursor: pointer;" onclick="toggleShowPassword(this)">
+			<h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 3vh; line-height: 1; margin-top: 0.6rem;">Show Password</h1>
+		</div>
+        <div class="mod-box smooth-btn" id="login" onclick="login()" style="flex-direction: row; align-items: center; height: 5vh; width: 6.9vw; padding: 0 1.5rem 0 3rem; gap: 0.75rem; cursor: pointer; transition: transform 0.3s ease-out, height 0.3s ease; user-select: none;">
+            <h1 style="font-size: 3vh; margin-top: 0.7rem;">login</h1>
+		</div>
+        <p id="error-msg" style="font-family: 'FunkinOptions', sans-serif; font-size: 2vh; color: #ff6b6b; display: none;"></p>
+    </body>
+	<script>
+		function toggleShowPassword(img) {
+			img.classList.toggle('selected');
+			const showing = img.classList.contains('selected');
+			img.src = showing ? '../mods/assets/checkbox-filled.png' : '../mods/assets/checkbox-empty.png';
+			document.getElementById('password-input').type = showing ? 'text' : 'password';
+		}
+
+        async function testMe() {
+            const token = localStorage.getItem('token');
+            const res = await fetch('https://defective-motto-trillion.ngrok-free.dev/api/me', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({})
+            });
+            const data = await res.json();
+            console.log('/api/me:', data);
+        }
+
+        async function login() {
+            const errorMsg = document.getElementById('error-msg');
+            errorMsg.style.display = 'none';
+
+            var username = document.querySelector('#username-box input').value;
+            var password = document.querySelector('#password-box input').value;
+
+            const res = await fetch('https://defective-motto-trillion.ngrok-free.dev/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                errorMsg.textContent = data.message;
+                errorMsg.style.display = 'block';
+                return;
+            }
+            localStorage.setItem('token', data.token);
+            window.location.href = '../';
+        }
+	</script>
+</html>
