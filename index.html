@@ -23,5 +23,20 @@
 
   <div class="irisEffect" style="z-index: 5000;"></div>
   <script src="script.js"></script>
+  <script>
+    (async function() {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const res = await fetch('https://defective-motto-trillion.ngrok-free.dev/api/me', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({})
+      });
+      if (res.ok) {
+        const signUpBtn = document.querySelector('img[src="sign-up.png"]');
+        if (signUpBtn) signUpBtn.remove();
+      }
+    })();
+  </script>
 </body>
 </html>
