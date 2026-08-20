@@ -227,8 +227,27 @@
         bubble.style.display = bubble.style.display === 'none' ? 'flex' : 'none';
     }
 
+    function normalize(str) {
+        return str.toLowerCase()
+            .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e')
+            .replace(/4/g, 'a').replace(/5/g, 's').replace(/8/g, 'b')
+            .replace(/@/g, 'a').replace(/\$/g, 's').replace(/[^a-z]/g, '');
+    }
+
+    async function isBlacklisted(text) {
+        const raw = await fetch(`${API}/word-blacklist`).then(r => r.text());
+        const words = raw.split('\n').map(w => normalize(w.trim())).filter(Boolean);
+        const normText = normalize(text);
+        return words.some(w => normText.includes(w));
+    }
+
     async function sendMessage() {
-        if (document.getElementById('chat-bar').value.trim() == "") return;
+        const contents = document.getElementById('chat-bar').value.trim();
+        if (!contents) return;
+        if (await isBlacklisted(contents)) {
+            document.getElementById('chat-bar').value = "";
+            return;
+        }
         const token = localStorage.getItem('token');
         if (!token) { window.location.href = '../login'; return; }
         const { id } = await fetch(`${API}/me`, {
@@ -240,7 +259,7 @@
         await fetch(`${API}/chat/send`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user: id, contents: document.getElementById('chat-bar').value.trim() })
+            body: JSON.stringify({ user: id, contents })
         });
         document.getElementById('chat-bar').value = "";
         scrollAfterUpdate = true;
