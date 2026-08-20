@@ -38,19 +38,34 @@
 
 <script src="../api.js"></script>
 <script>
+    const avatarCache = new Map();
+    async function getAvatarSrc(userId) {
+        if (!avatarCache.has(userId)) {
+            try {
+                const res = await fetch(`${API}/avatars/${userId}.png`, { method: 'HEAD' });
+                avatarCache.set(userId, res.ok);
+            } catch {
+                avatarCache.set(userId, false);
+            }
+        }
+        return avatarCache.get(userId) ? `${API}/avatars/${userId}.png` : '../icon-profile-out.png';
+    }
+
     let updating = false;
     async function updateTheMessages() {
         if (updating) return;
         updating = true;
         try {
             var out = "";
-            const messages = await fetch(`${API}/chat/read`).then(r => r.json());
+            const all = await fetch(`${API}/chat/read`).then(r => r.json());
+            const messages = all.slice(-5);
             for (const message of messages) {
                 const user = await fetch(`${API}/users/${message.poster}`).then(r => r.json());
+                const avatarSrc = await getAvatarSrc(user.id);
                 out += `
                 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0rem; justify-content: start;">
                     <div style="display: flex; justify-content: flex-start; align-items: center; gap: 0.5vw">
-                        <img src="https://api.funkinbackstage.com/avatars/${user.id}.png" style="height: 5vh; border-radius: 50%" onerror="this.onerror=null;this.src='../icon-profile-out.png'"/>
+                        <img src="${avatarSrc}" style="height: 5vh; border-radius: 50%"/>
                         <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 4vh; margin-top: 1.5vh; color: #BABABA">${user.username}</h1>
                     </div>
                     <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 5vh; margin: 0;">${message.contents}</h1>
