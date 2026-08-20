@@ -28,7 +28,7 @@
     (async function() {
       const token = localStorage.getItem('token');
       if (!token) return;
-      const res = await fetch(`${API}/api/me`, {
+      const res = await fetch(`${API}/me`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({})

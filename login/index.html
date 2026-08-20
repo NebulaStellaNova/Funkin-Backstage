@@ -48,19 +48,24 @@
             const username = document.querySelector('#username-box input').value.trim();
             const password = document.querySelector('#password-box input').value;
 
-            const res = await fetch(`${API}/api/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                errorMsg.textContent = data.message;
+            try {
+                const res = await fetch(`${API}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    errorMsg.textContent = data.message;
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+                localStorage.setItem('token', data.token);
+                window.location.href = '../';
+            } catch (e) {
+                errorMsg.textContent = 'Could not reach server. Try again.';
                 errorMsg.style.display = 'block';
-                return;
             }
-            localStorage.setItem('token', data.token);
-            window.location.href = '../';
         }
 	</script>
 </html>
