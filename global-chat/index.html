@@ -14,6 +14,47 @@
   <link rel="stylesheet" href="../style.css" type="text/css">
   <link rel="stylesheet" href="style.css" type="text/css">
   <style>
+    #chat-scroll {
+      scrollbar-width: none;
+    }
+    #chat-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    #scroll-track {
+      width: 40px;
+      height: 100%;
+      flex-shrink: 0;
+      position: relative;
+      background-image: url('scroll-bar-bg.png');
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+      cursor: pointer;
+    }
+    #scroll-thumb {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-image: url('scroll-bar-track.png');
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+      cursor: grab;
+    }
+    #scroll-thumb:active {
+      cursor: grabbing;
+    }
+
+    .sticker-in-bubble {
+        height: 8.5vh;
+    }
+    .sticker-in-bubble:hover {
+        height: 8.5vh;
+      cursor: pointer;
+    }
+
     @media (max-width: 768px) {
       html, body { overflow: hidden; }
       body { align-items: flex-start; justify-content: center; padding-top: 10vh; }
@@ -28,13 +69,23 @@
 </head>
 <body style="display: flex; flex-direction: column; gap: 3vh; justify-content: center;">
     <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 10vh;">Global Chat</h1>
-    <div class="ui-box" id="chat-box" style="width: 100rem; height: 65vh; padding-top: 0.9rem; padding-bottom: 0.8rem; display: flex; flex-direction: column; align-items: flex-start;">
-        <div id="chat-scroll" style="width: 100%; height: 100%; overflow-y: scroll; display: flex; flex-direction: column; gap: 2vh; padding: 1vh;">
+    <div class="ui-box" id="chat-box" style="width: 100rem; height: 65vh; padding-top: 0.9rem; padding-bottom: 0.8rem; display: flex; flex-direction: row; align-items: flex-start; gap: 0;">
+        <div id="chat-scroll" style="flex: 1; height: 100%; overflow-y: scroll; display: flex; flex-direction: column; gap: 2vh; padding: 1vh;">
+        </div>
+        <div id="scroll-track">
+            <div id="scroll-thumb"></div>
         </div>
     </div>
-    <div class="ui-box" style="width: 100rem; height: 1rem; gap: 3vh;">
-        <input type="text" id="chat-bar" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" onkeydown="if(event.key==='Enter')sendMessage()"/>
-        <img src="icon-sticker.png" class="smooth-btn" style="width: 3.5vh; height: 4vh; margin-left: auto; flex-shrink: 0; cursor: pointer;"/>
+    <div class="ui-box" style="width: 100rem; height: 1rem; gap: 3vh; position: relative;">
+        <input onchange="onChange(this)" type="text" id="chat-bar" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" onkeydown="if(event.key==='Enter')sendMessage()"/>
+        <div style="position: relative; flex-shrink: 0;">
+            <div id="sticker-bubble" style="display: none; position: absolute; bottom: 0; right: 1vh; background-image: url('sticker-bubble.png'); background-size: contain; background-repeat: no-repeat; width: 40vh; height: 40vh; padding: 2vh; gap: 1vh;">
+                <img id="bfSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/bfSticker1.png" onclick="addSticker(this.id)"/>
+                <img id="picoSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/picoSticker1.png" onclick="addSticker(this.id)"/>
+                <img id="vampSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/vampSticker1.png" onclick="addSticker(this.id)"/>
+            </div>
+            <img src="icon-sticker.png" class="smooth-btn" style="width: 3.5vh; height: 4vh; margin-left: auto; cursor: pointer;" onclick="toggleStickerBubble()"/>
+        </div>
         <img src="icon-send.png" class="smooth-btn" style="width: 4vh; height: 4vh; margin-left: auto; flex-shrink: 0; cursor: pointer;" onclick="sendMessage()"/>
     </div>
 </body>
@@ -59,6 +110,43 @@
         return files.map(f => `${f}`.replace('.png', ''));
     }
 
+    // Custom scrollbar
+    const scrollEl = document.getElementById('chat-scroll');
+    const track = document.getElementById('scroll-track');
+    const thumb = document.getElementById('scroll-thumb');
+
+    const THUMB_H = 85;
+    function updateThumb() {
+        const trackH = track.clientHeight;
+        const scrollRange = scrollEl.scrollHeight - scrollEl.clientHeight;
+        const thumbTop = scrollRange > 0 ? (scrollEl.scrollTop / scrollRange) * (trackH - THUMB_H) : 0;
+        thumb.style.top = thumbTop + 'px';
+    }
+
+    scrollEl.addEventListener('scroll', updateThumb);
+
+    let dragging = false, startY = 0, startScrollTop = 0;
+    thumb.addEventListener('mousedown', e => {
+        dragging = true;
+        startY = e.clientY;
+        startScrollTop = scrollEl.scrollTop;
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const dy = e.clientY - startY;
+        const trackH = track.clientHeight;
+        const scrollRange = scrollEl.scrollHeight - scrollEl.clientHeight;
+        scrollEl.scrollTop = startScrollTop + (dy / (trackH - THUMB_H)) * scrollRange;
+    });
+    document.addEventListener('mouseup', () => { dragging = false; });
+
+    track.addEventListener('click', e => {
+        if (e.target === thumb) return;
+        const rect = track.getBoundingClientRect();
+        const ratio = (e.clientY - rect.top) / track.clientHeight;
+        scrollEl.scrollTop = ratio * scrollEl.scrollHeight;
+    });
 
     let updating = false;
     async function updateTheMessages() {
@@ -89,12 +177,31 @@
             }
             const box = document.getElementById('chat-scroll');
             box.innerHTML = out;
+            updateThumb();
         } finally {
             updating = false;
         }
     }
     updateTheMessages();
     setInterval(updateTheMessages, 2000);
+
+    function addSticker(id) {
+        document.getElementById('chat-bar').value += `:${id}: `;
+        toggleStickerBubble();
+        document.getElementById('chat-bar').focus();
+    }
+
+    function toggleStickerBubble() {
+        const bubble = document.getElementById('sticker-bubble');
+        bubble.style.display = bubble.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    async function onChange(field) {
+        var stickerList = await getStickers();
+        for (const sticker of stickerList) {
+            field.value = field.value.replace(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height: 5vh; margin: 1vh; margin-top: -1vh;"/>`);
+        }
+    }
 
     async function sendMessage() {
         const token = localStorage.getItem('token');
@@ -104,7 +211,7 @@
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({})
         }).then(r => r.json());
-        
+
         await fetch(`${API}/chat/send`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
