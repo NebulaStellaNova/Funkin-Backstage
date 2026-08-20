@@ -213,15 +213,15 @@
         const doScroll = scrollAfterUpdate;
         scrollAfterUpdate = false;
         try {
-            var stickerList = await getStickers();
-            var out = "";
+            const stickerList = await getStickers();
+            let out = "";
             const all = await fetch(`${API}/chat/read`).then(r => r.json());
             const messages = all.slice(-25);
             for (const message of messages) {
                 const user = await fetch(`${API}/users/${message.poster}`).then(r => r.json());
                 const avatarSrc = await getAvatarSrc(user.id);
-                var content = `${message.contents}`.trim();
-                var stickerOnly = content.startsWith(':') && content.endsWith(':');
+                let content = escapeHTML(`${message.contents}`.trim());
+                const stickerOnly = content.startsWith(':') && content.endsWith(':');
                 for (const sticker of stickerList) {
                     content = content.replace(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height: ${stickerOnly ? '13' : '5' }vh; ${stickerOnly ? '' : 'margin: 1vh; margin-top: -1vh;'}"/>`);
                 }
@@ -287,6 +287,17 @@
         bubble.style.display = bubble.style.display === 'none' ? 'flex' : 'none';
     }
 
+    function escapeHTML(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
     function normalize(str) {
         return str.toLowerCase()
             .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e')
@@ -298,7 +309,13 @@
         const raw = await fetch(`${API}/word-blacklist`).then(r => r.text());
         const words = raw.split('\n').map(w => normalize(w.trim())).filter(Boolean);
         const normText = normalize(text);
-        if (normText.includes('<')) return true;
+        // Check to see if it's an embed, so fucking weirdos can't send wild shit, because
+        // we don't want that now, do we?
+        const htmlRegex = /<\/?[a-z][\s\S]*>/i;
+        if (htmlRegex.test(contents)) {
+            document.getElementById('chat-bar').value = ""; // Clear the bar or show an error
+            return true;
+        }
         return words.some(w => normText.includes(w));
     }
 
@@ -324,7 +341,7 @@
         });
         document.getElementById('chat-bar').value = "";
         scrollAfterUpdate = true;
-        updateTheMessages();
+        await updateTheMessages();
     }
 </script>
 
