@@ -68,7 +68,10 @@
   </style>
 </head>
 <body style="display: flex; flex-direction: column; gap: 3vh; justify-content: center;">
-    <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 10vh;">Global Chat</h1>
+    <div style="display: flex; align-items: center; gap: 2vh;">
+        <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 10vh;">Global Chat</h1>
+        <span id="active-count" style="font-family: 'FunkinOptions', sans-serif; font-size: 2.5vh; align-self: center; margin-bottom: 0.5rem; color: #BABABA">• 0 active</span>
+    </div>
     <div class="ui-box" id="chat-box" style="width: 100rem; height: 65vh; padding-top: 0.9rem; padding-bottom: 0.8rem; display: flex; flex-direction: row; align-items: flex-start; gap: 0;">
         <div id="chat-scroll" style="flex: 1; height: 100%; overflow-y: scroll; display: flex; flex-direction: column; gap: 2vh; padding: 1vh;">
         </div>
@@ -79,7 +82,7 @@
     <div class="ui-box" style="width: 100rem; height: 1rem; gap: 3vh; position: relative;">
         <input type="text" id="chat-bar" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" onkeydown="if(event.key==='Enter')sendMessage()"/>
         <div st yle="position: relative; flex-shrink: 0;">
-            <div id="sticker-bubble" style="display: none; position: absolute; bottom: 0; right: 1vh; background-image: url('sticker-bubble.png'); background-size: contain; background-repeat: no-repeat; width: 40vh; height: 40vh; padding: 2vh; gap: 1vh;">
+            <div id="sticker-bubble" style="display: none; position: absolute; bottom: 0; right: 7vw; background-image: url('sticker-bubble.png'); background-size: contain; background-repeat: no-repeat; width: 40vh; height: 40vh; padding: 2vh; gap: 1vh;">
                 <img id="bfSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/bfSticker1.png" onclick="addSticker(this.id)"/>
                 <img id="picoSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/picoSticker1.png" onclick="addSticker(this.id)"/>
                 <img id="vampSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/vampSticker1.png" onclick="addSticker(this.id)"/>
@@ -198,6 +201,18 @@
             updating = false;
         }
     }
+    if (!sessionStorage.getItem('chatSessionId'))
+        sessionStorage.setItem('chatSessionId', Math.random().toString(36).slice(2));
+    const chatSessionId = sessionStorage.getItem('chatSessionId');
+
+    fetch(`${API}/chat/join`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: chatSessionId }) });
+    window.addEventListener('beforeunload', () => navigator.sendBeacon(`${API}/chat/leave`, JSON.stringify({ sessionId: chatSessionId })));
+
+    const countStream = new EventSource(`${API}/chat/count-stream`);
+    countStream.onmessage = e => {
+        document.getElementById('active-count').innerHTML = `<a style="color: #00FF00;">•</a> ${e.data} active`;
+    };
+
     updateTheMessages();
     setInterval(updateTheMessages, 2000);
 
