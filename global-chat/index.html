@@ -50,7 +50,7 @@
                 out += `
                 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0rem; justify-content: start;">
                     <div style="display: flex; justify-content: flex-start; align-items: center; gap: 0.5vw">
-                        <img src="https://api.funkinbackstage.com/avatars/${user.id}.png" style="height: 5vh; border-radius: 50%"/>
+                        <img src="https://api.funkinbackstage.com/avatars/${user.id}.png" style="height: 5vh; border-radius: 50%" onerror="this.onerror=null;this.src='../icon-profile-out.png'"/>
                         <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 4vh; margin-top: 1.5vh; color: #BABABA">${user.username}</h1>
                     </div>
                     <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 5vh; margin: 0;">${message.contents}</h1>
