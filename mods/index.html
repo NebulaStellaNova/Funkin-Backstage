@@ -121,7 +121,7 @@
 		</div>
 		<div id="mod-grid-container" style="position: fixed; top: calc(9rem + 7vh + 1.5rem); left: calc(2rem + 25vw + 1.5rem); right: 1.2rem; bottom: 3rem; overflow-y: auto; overflow-x: hidden;">
 			<div id="mod-grid">
-				<div class="mod-card">
+				<!-- <div class="mod-card">
 					<img draggable="false" src="https://images.gamebanana.com/img/ss/mods/602ad2dd9c20e.jpg" class="mod-thumbnail">
 					<img draggable="false" src="https://images.gamebanana.com/img/av/6a07718283568.png" class="mod-topleft">
 					<img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
@@ -154,7 +154,7 @@
 								<h1 style="font-size: 2vh;">5Y</h1>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
@@ -177,6 +177,80 @@
 			</div>
 		</div>
 		<script src="scripts/main.js"></script>
+		<script src="../api.js"></script>
+		<script>
+			function fmtNum(n) {
+				if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+				if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+				return String(n);
+			}
+
+			function relTime(dateStr) {
+				const diff = Date.now() - new Date(dateStr).getTime();
+				const s = Math.floor(diff / 1000);
+				if (s < 3600)   return Math.max(1, Math.floor(s / 60)) + 'm';
+				if (s < 86400)  return Math.floor(s / 3600) + 'h';
+				if (s < 2592000) return Math.floor(s / 86400) + 'd';
+				if (s < 31536000) return Math.floor(s / 2592000) + 'mo';
+				return Math.floor(s / 31536000) + 'y';
+			}
+
+			(async function() {
+				const files = await fetch(`${API}/submissions`).then(r => r.json()).catch(() => []);
+				if (!files.length) return;
+				for (const id of files) {
+					const meta = await fetch(`${API}/submissions/${id}/meta.json`).then(r => r.json());
+
+					const parentElement = document.getElementById("mod-grid");
+					const subElement = document.createElement(`mod-${id}`);
+					subElement.innerHTML = `
+						<div class="mod-card">
+							<img draggable="false" src="${meta.thumbnails[0]}" class="mod-thumbnail">
+							<img draggable="false" src="https://api.funkinbackstage.com/avatars/${meta.submitter}.png" class="mod-topleft">
+							<img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
+							<div class="mod-label">
+								<h1 style="font-size: 3vh;">${meta.title}</h1>
+								<h1 style="font-size: 2vh; color: #C7C7C7;">${meta.description}</h1>
+							</div>
+							<div class="mod-footer">
+								<div class="mod-footer-left">
+									<div class="footer-piece">
+										<img draggable="false" src="assets/icon-download.png" style="height: 1.8vh;">
+										<h1 style="font-size: 2vh;">${fmtNum(meta.downloads ?? 0)}</h1>
+									</div>
+									<div class="footer-piece">
+										<img draggable="false" src="assets/icon-heart.png" style="height: 1.8vh;">
+										<h1 style="font-size: 2vh;">${fmtNum(meta.likes ?? 0)}</h1>
+									</div>
+									<div class="footer-piece">
+										<img draggable="false" src="assets/icon-views.png" style="height: 1.8vh;">
+										<h1 style="font-size: 2vh;">${fmtNum(meta.views ?? 0)}</h1>
+									</div>
+								</div>
+								<div class="mod-footer-right">
+									${meta.stars > 0 ? `
+									<div class="footer-piece">
+										<img draggable="false" src="assets/icon-featured.png" style="height: 1.8vh;">
+										<h1 style="font-size: 2vh;">FEATURED</h1>
+									</div>` : ``}
+									${meta.updateDate == "" ? `
+									<div class="footer-piece">
+										<img draggable="false" src="assets/icon-plus.png" style="height: 1.8vh;">
+										<h1 style="font-size: 2vh;">${relTime(meta.uploadDate)}</h1>
+									</div>` : `
+									<div class="footer-piece">
+										<img draggable="false" src="assets/icon-updated.png" style="height: 1.8vh;">
+										<h1 style="font-size: 2vh;">${relTime(meta.updateDate)}</h1>
+									</div>`}
+									
+								</div>
+							</div>
+						</div>
+					`;
+					parentElement.appendChild(subElement);
+				}
+			})();
+		</script>
 		<p style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666;">© 2026 NebulaStellaNova — Fan-made, not affiliated with Newgrounds or The Funkin' Crew, Inc.</p>
 	</body>
 </html>

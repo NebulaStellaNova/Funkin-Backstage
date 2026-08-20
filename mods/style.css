@@ -100,6 +100,7 @@ img {
 .mod-label h1 {
   margin: 0;
   line-height: 1.1;
+  font-weight: normal;
 }
 
 .mod-card {
@@ -153,9 +154,15 @@ img {
   margin-bottom: 0.5rem;
 }
 
+.footer-piece img {
+  position: relative;
+  top: -0.05em;
+}
+
 .footer-piece h1 {
   margin: 0;
   line-height: 1;
+  font-weight: normal;
 }
 
 @media (max-width: 768px) {
