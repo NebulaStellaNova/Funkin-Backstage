@@ -32,11 +32,8 @@
         <p id="error-msg" style="font-family: 'FunkinOptions', sans-serif; font-size: 2vh; color: #ff6b6b; display: none;"></p>
         <p style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666;">© 2026 NebulaStellaNova — Fan-made, not affiliated with Newgrounds or The Funkin' Crew, Inc.</p>
     </body>
-	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="../api.js"></script>
 	<script>
-		const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 		function toggleShowPassword(img) {
 			img.classList.toggle('selected');
 			const showing = img.classList.contains('selected');
@@ -51,16 +48,18 @@
             const username = document.querySelector('#username-box input').value.trim();
             const password = document.querySelector('#password-box input').value;
 
-            const { error } = await _supabase.auth.signInWithPassword({
-                email: `${username}@funkin-backstage.local`,
-                password
+            const res = await fetch(`${API}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
             });
-
-            if (error) {
-                errorMsg.textContent = 'Invalid username or password';
+            const data = await res.json();
+            if (!res.ok) {
+                errorMsg.textContent = data.message;
                 errorMsg.style.display = 'block';
                 return;
             }
+            localStorage.setItem('token', data.token);
             window.location.href = '../';
         }
 	</script>
