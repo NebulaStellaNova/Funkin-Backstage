@@ -224,6 +224,7 @@
 				if (!files.length) return;
 				for (const id of files) {
 					const meta = await fetch(`${API}/submissions/${id}/meta.json`).then(r => r.json());
+					if (!meta.live) continue;
 					const isLiked = likedSubmissions.includes(id);
 					const heartIcon = isLiked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
 
