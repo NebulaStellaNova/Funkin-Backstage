@@ -195,18 +195,44 @@
 				return Math.floor(s / 31536000) + 'y';
 			}
 
+			async function toggleLike(id, pieceEl) {
+				const token = localStorage.getItem('token');
+				if (!token) { window.location.href = '../login'; return; }
+				const res = await fetch(`${API}/submissions/${id}/like`, {
+					method: 'POST',
+					headers: { 'Authorization': `Bearer ${token}` }
+				});
+				if (!res.ok) return;
+				const data = await res.json();
+				pieceEl.querySelector('img').src = data.liked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
+				pieceEl.querySelector('h1').textContent = fmtNum(data.likes);
+			}
+
 			(async function() {
+				const token = localStorage.getItem('token');
+				let likedSubmissions = [];
+				if (token) {
+					const meRes = await fetch(`${API}/me`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+						body: JSON.stringify({})
+					});
+					if (meRes.ok) likedSubmissions = (await meRes.json()).likedSubmissions ?? [];
+				}
+
 				const files = await fetch(`${API}/submissions`).then(r => r.json()).catch(() => []);
 				if (!files.length) return;
 				for (const id of files) {
 					const meta = await fetch(`${API}/submissions/${id}/meta.json`).then(r => r.json());
+					const isLiked = likedSubmissions.includes(id);
+					const heartIcon = isLiked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
 
 					const parentElement = document.getElementById("mod-grid");
 					const subElement = document.createElement(`mod-${id}`);
 					subElement.innerHTML = `
 						<div class="mod-card">
 							<img draggable="false" src="${meta.thumbnails[0]}" class="mod-thumbnail">
-							<img draggable="false" src="https://api.funkinbackstage.com/avatars/${meta.submitter}.png" class="mod-topleft">
+							<img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
 							<img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
 							<div class="mod-label">
 								<h1 style="font-size: 3vh;">${meta.title}</h1>
@@ -218,8 +244,8 @@
 										<img draggable="false" src="assets/icon-download.png" style="height: 1.8vh;">
 										<h1 style="font-size: 2vh;">${fmtNum(meta.downloads ?? 0)}</h1>
 									</div>
-									<div class="footer-piece">
-										<img draggable="false" src="assets/icon-heart.png" style="height: 1.8vh;">
+									<div class="footer-piece" style="cursor: ${token ? 'pointer' : 'default'};" onclick="toggleLike('${id}', this)">
+										<img draggable="false" src="${heartIcon}" style="height: 1.8vh;">
 										<h1 style="font-size: 2vh;">${fmtNum(meta.likes ?? 0)}</h1>
 									</div>
 									<div class="footer-piece">
@@ -242,7 +268,6 @@
 										<img draggable="false" src="assets/icon-updated.png" style="height: 1.8vh;">
 										<h1 style="font-size: 2vh;">${relTime(meta.updateDate)}</h1>
 									</div>`}
-									
 								</div>
 							</div>
 						</div>
@@ -253,5 +278,13 @@
 		</script>
 		<p class="footer-left" style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666;"></p>
 		<p class="footer-right" style="position: fixed; bottom: 1rem; right: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666; text-align: right;"></p>
+		<div style="position: fixed; top: 1rem; right: 2rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666; text-align: right; display: flex; align-items: center; gap: 2rem;">
+			<div class="mod-box smooth-btn" id="upload-button" style="display: flex; flex-direction: row; align-items: center; gap: 1rem; height: 5vh; transition: transform 0.3s ease-out, height 0.3s ease; cursor: pointer;">
+				<h1 style="font-size: 2.5vh; color: #E1E1E1; margin-top: 0.3vh">UPLOAD</h1>
+				<img src="../icon-upload.png" style="height: 2.5vh; width: 2.5vh; margin-top: -0.4rem; margin-right: 0.6rem"/>
+			</div>
+			
+			<img class="smooth-btn" src="../icon-profile-out.png" style="transition: transform 0.3s ease-out, height 0.3s ease; height: 7vh; cursor: pointer;"/>
+		</div>
 	</body>
 </html>
