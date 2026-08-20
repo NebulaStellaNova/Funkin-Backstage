@@ -312,7 +312,7 @@
         // Check to see if it's an embed, so fucking weirdos can't send wild shit, because
         // we don't want that now, do we?
         const htmlRegex = /<\/?[a-z][\s\S]*>/i;
-        if (htmlRegex.test(contents)) {
+        if (htmlRegex.test(text)) {
             document.getElementById('chat-bar').value = "";
             return true;
         }
