@@ -313,7 +313,7 @@
         // we don't want that now, do we?
         const htmlRegex = /<\/?[a-z][\s\S]*>/i;
         if (htmlRegex.test(contents)) {
-            document.getElementById('chat-bar').value = ""; // Clear the bar or show an error
+            document.getElementById('chat-bar').value = "";
             return true;
         }
         return words.some(w => normText.includes(w));
