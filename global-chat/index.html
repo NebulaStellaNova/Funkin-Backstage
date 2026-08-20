@@ -67,7 +67,6 @@
         gap: 1.5vh !important;
         min-height: 100vh;
       }
-      /* Title row */
       body > div:first-child {
         gap: 1.5vw;
         flex-wrap: wrap;
@@ -79,12 +78,10 @@
         font-size: 2vh !important;
         margin-bottom: 0 !important;
       }
-      /* Chat box */
       #chat-box {
         width: 100% !important;
         height: 55vh !important;
       }
-      /* Hide custom scrollbar track on mobile — use native thin scrollbar */
       #scroll-track {
         display: none !important;
       }
@@ -99,22 +96,25 @@
         background: rgba(255,255,255,0.3);
         border-radius: 2px;
       }
-      /* Input bar */
       body > .ui-box:last-of-type {
         width: 100% !important;
       }
-      /* Sticker bubble */
       #sticker-bubble {
         right: 0 !important;
         width: 28vh !important;
         height: 28vh !important;
       }
-      /* Message text */
       #chat-scroll h1 {
         font-size: 2.8vh !important;
       }
       #chat-scroll h1:last-child {
         font-size: 3.2vh !important;
+      }
+      .sticker-in-bubble {
+        height: 5vh !important;
+      }
+      .footer-left, .footer-right {
+        font-size: 0.75rem !important;
       }
     }
   </style>
@@ -168,7 +168,6 @@
         return files.map(f => `${f}`.replace('.png', ''));
     }
 
-    // Custom scrollbar
     const scrollEl = document.getElementById('chat-scroll');
     const track = document.getElementById('scroll-track');
     const thumb = document.getElementById('scroll-thumb');
