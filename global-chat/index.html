@@ -205,8 +205,11 @@
         sessionStorage.setItem('chatSessionId', Math.random().toString(36).slice(2));
     const chatSessionId = sessionStorage.getItem('chatSessionId');
 
-    fetch(`${API}/chat/join`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: chatSessionId }) });
-    window.addEventListener('beforeunload', () => navigator.sendBeacon(`${API}/chat/leave`, JSON.stringify({ sessionId: chatSessionId })));
+    function pingServer() {
+        fetch(`${API}/chat/ping`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: chatSessionId }) });
+    }
+    pingServer();
+    setInterval(pingServer, 5000);
 
     const countStream = new EventSource(`${API}/chat/count-stream`);
     countStream.onmessage = e => {
