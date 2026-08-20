@@ -59,6 +59,10 @@ p {
   color: #888;
 }
 
+.footer-left, .footer-right {
+  z-index: 101;
+}
+
 .footer-left a, .footer-right a {
   color: inherit;
   text-decoration: none;
