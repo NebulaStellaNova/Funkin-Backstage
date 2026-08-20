@@ -56,14 +56,66 @@
     }
 
     @media (max-width: 768px) {
-      html, body { overflow: hidden; }
-      body { align-items: flex-start; justify-content: center; padding-top: 10vh; }
-      h1 { font-size: 2.5rem; text-align: center; }
-      p:not(.footer-left):not(.footer-right) { font-size: 1.6rem; }
-      .footer-left, .footer-right { font-size: 0.75rem !important; }
-      .container div { display: flex !important; flex-direction: column; align-items: center; gap: 1rem; }
-      .container div img { height: 2.5rem !important; }
-      #portrait { height: 28vh !important; bottom: 0rem !important; }
+      html, body {
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      body {
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        padding: 2vh 4vw !important;
+        gap: 1.5vh !important;
+        min-height: 100vh;
+      }
+      /* Title row */
+      body > div:first-child {
+        gap: 1.5vw;
+        flex-wrap: wrap;
+      }
+      body > div:first-child h1 {
+        font-size: 6vh !important;
+      }
+      #active-count {
+        font-size: 2vh !important;
+        margin-bottom: 0 !important;
+      }
+      /* Chat box */
+      #chat-box {
+        width: 100% !important;
+        height: 55vh !important;
+      }
+      /* Hide custom scrollbar track on mobile — use native thin scrollbar */
+      #scroll-track {
+        display: none !important;
+      }
+      #chat-scroll {
+        scrollbar-width: thin !important;
+      }
+      #chat-scroll::-webkit-scrollbar {
+        display: block !important;
+        width: 4px;
+      }
+      #chat-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.3);
+        border-radius: 2px;
+      }
+      /* Input bar */
+      body > .ui-box:last-of-type {
+        width: 100% !important;
+      }
+      /* Sticker bubble */
+      #sticker-bubble {
+        right: 0 !important;
+        width: 28vh !important;
+        height: 28vh !important;
+      }
+      /* Message text */
+      #chat-scroll h1 {
+        font-size: 2.8vh !important;
+      }
+      #chat-scroll h1:last-child {
+        font-size: 3.2vh !important;
+      }
     }
   </style>
 </head>
@@ -81,7 +133,7 @@
     </div>
     <div class="ui-box" style="width: 100rem; height: 1rem; gap: 3vh; position: relative;">
         <input type="text" id="chat-bar" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" onkeydown="if(event.key==='Enter')sendMessage()"/>
-        <div st yle="position: relative; flex-shrink: 0;">
+        <div style="position: relative; flex-shrink: 0;">
             <div id="sticker-bubble" style="display: none; position: absolute; bottom: 0; right: 7vw; background-image: url('sticker-bubble.png'); background-size: contain; background-repeat: no-repeat; width: 40vh; height: 40vh; padding: 2vh; gap: 1vh;">
                 <img id="bfSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/bfSticker1.png" onclick="addSticker(this.id)"/>
                 <img id="picoSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/picoSticker1.png" onclick="addSticker(this.id)"/>
@@ -92,6 +144,9 @@
         <img src="icon-send.png" class="smooth-btn" style="width: 4vh; height: 4vh; margin-left: auto; flex-shrink: 0; cursor: pointer;" onclick="sendMessage()"/>
     </div>
 </body>
+
+<p class="footer-left" style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666; z-index: 101;"></p>
+<p class="footer-right" style="position: fixed; bottom: 1rem; right: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666; z-index: 101; text-align: right;"></p>
 
 <script src="../api.js"></script>
 <script>
