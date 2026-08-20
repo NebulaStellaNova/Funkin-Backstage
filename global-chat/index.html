@@ -30,7 +30,7 @@
     <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 10vh;">Global Chat</h1>
     <div class="ui-box" id="chat-box" style="width: 100rem; height: 65vh; gap: 2vh; justify-content: flex-end; display: flex; flex-direction: column; align-items: flex-start; overflow-y: auto;"></div>
     <div class="ui-box" style="width: 100rem; height: 1rem; gap: 3vh">
-        <input type="text" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" />
+        <input type="text" id="chat-bar" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" />
         <img src="icon-sticker.png" class="smooth-btn" style="width: 3.5vh; height: 4vh; margin-left: auto; flex-shrink: 0; cursor: pointer;"/>
         <img src="icon-send.png" class="smooth-btn" style="width: 4vh; height: 4vh; margin-left: auto; flex-shrink: 0; cursor: pointer;" onclick="sendMessage()"/>
     </div>
@@ -68,7 +68,13 @@
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({})
         }).then(r => r.json());
-        console.log(id);
+        
+        await fetch(`${API}/chat/send`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user: id, contents: document.getElementById('chat-bar').value.trim() })
+        });
+        document.getElementById('chat-bar').value = "";
     }
 </script>
 
