@@ -298,6 +298,7 @@
         const raw = await fetch(`${API}/word-blacklist`).then(r => r.text());
         const words = raw.split('\n').map(w => normalize(w.trim())).filter(Boolean);
         const normText = normalize(text);
+        if (normText.includes('<')) return true;
         return words.some(w => normText.includes(w));
     }
 
