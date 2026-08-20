@@ -59,6 +59,15 @@ p {
   color: #888;
 }
 
+.footer-left a, .footer-right a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-left a:hover, .footer-right a:hover {
+  text-decoration: underline;
+}
+
 .smooth-btn {
   transform: scale(1);
   transition: transform 0.3s ease-out;
