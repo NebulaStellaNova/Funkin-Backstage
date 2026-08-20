@@ -77,8 +77,8 @@
         </div>
     </div>
     <div class="ui-box" style="width: 100rem; height: 1rem; gap: 3vh; position: relative;">
-        <input onchange="onChange(this)" type="text" id="chat-bar" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" onkeydown="if(event.key==='Enter')sendMessage()"/>
-        <div style="position: relative; flex-shrink: 0;">
+        <input type="text" id="chat-bar" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" onkeydown="if(event.key==='Enter')sendMessage()"/>
+        <div st yle="position: relative; flex-shrink: 0;">
             <div id="sticker-bubble" style="display: none; position: absolute; bottom: 0; right: 1vh; background-image: url('sticker-bubble.png'); background-size: contain; background-repeat: no-repeat; width: 40vh; height: 40vh; padding: 2vh; gap: 1vh;">
                 <img id="bfSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/bfSticker1.png" onclick="addSticker(this.id)"/>
                 <img id="picoSticker1" class="sticker-in-bubble smooth-btn" src="https://api.funkinbackstage.com/stickers/picoSticker1.png" onclick="addSticker(this.id)"/>
@@ -177,7 +177,16 @@
             }
             const box = document.getElementById('chat-scroll');
             box.innerHTML = out;
-            updateThumb();
+            const imgs = Array.from(box.querySelectorAll('img'));
+            const pending = imgs.filter(img => !img.complete);
+            if (pending.length === 0) {
+                box.scrollTop = box.scrollHeight;
+                updateThumb();
+            } else {
+                let done = 0;
+                const onSettle = () => { if (++done >= pending.length) { box.scrollTop = box.scrollHeight; updateThumb(); } };
+                pending.forEach(img => { img.addEventListener('load', onSettle); img.addEventListener('error', onSettle); });
+            }
         } finally {
             updating = false;
         }
@@ -196,14 +205,8 @@
         bubble.style.display = bubble.style.display === 'none' ? 'flex' : 'none';
     }
 
-    async function onChange(field) {
-        var stickerList = await getStickers();
-        for (const sticker of stickerList) {
-            field.value = field.value.replace(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height: 5vh; margin: 1vh; margin-top: -1vh;"/>`);
-        }
-    }
-
     async function sendMessage() {
+        if (document.getElementById('chat-bar').value.trim() == "") return;
         const token = localStorage.getItem('token');
         if (!token) { window.location.href = '../login'; return; }
         const { id } = await fetch(`${API}/me`, {
