@@ -72,17 +72,18 @@
             for (const message of messages) {
                 const user = await fetch(`${API}/users/${message.poster}`).then(r => r.json());
                 const avatarSrc = await getAvatarSrc(user.id);
-                var content = message.contents;
+                var content = `${message.contents}`.trim();
+                var stickerOnly = content.startsWith(':') && content.endsWith(':');
                 for (const sticker of stickerList) {
-                    content = content.replace(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height: 13vh;"/>`);
+                    content = content.replace(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height: ${stickerOnly ? '13' : '5' }vh; ${stickerOnly ? '' : 'margin: 1vh; margin-top: -1vh;'}"/>`);
                 }
                 out += `
                 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0rem; justify-content: start;">
                     <div style="display: flex; justify-content: flex-start; align-items: center; gap: 0.5vw">
-                        <img src="${avatarSrc}" style="height: 5vh; border-radius: 50%"/>
-                        <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 4vh; margin-top: 1.5vh; color: #BABABA">${user.username}</h1>
+                        <img src="${avatarSrc}" style="height: 4vh; border-radius: 50%"/>
+                        <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 3vh; margin-top: 1.5vh; color: #BABABA">${user.username}</h1>
                     </div>
-                    <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 5vh; margin: 0;">${content}</h1>
+                    <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 4vh; margin: 0; display: flex; align-items: center">${content}</h1>
                 </div>
                 `
             }
