@@ -6,7 +6,7 @@ const FOOTER_RIGHT = '<a href="https://discord.gg/VNuGRjnqwP">Discord</a> • <a
 const FOOTER_LEFT_MOBILE = '© NebulaStellaNova';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
   document.querySelectorAll('.footer-left').forEach(el => el.innerHTML = isMobile ? FOOTER_LEFT_MOBILE : FOOTER_LEFT);
   document.querySelectorAll('.footer-right').forEach(el => el.innerHTML = FOOTER_RIGHT);
 });
