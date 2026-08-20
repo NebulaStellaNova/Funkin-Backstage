@@ -6,6 +6,14 @@
   <title>Funkin' Backstage</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css" type="text/css">
+  <style>
+    @media (max-width: 768px) {
+      h1 { font-size: 4rem; text-align: center; }
+      p { font-size: 1.6rem; }
+      .container div { display: flex !important; flex-direction: column; align-items: center; gap: 1rem; }
+      #portrait { height: 33vh !important; }
+    }
+  </style>
 </head>
 <body>
   <img src="right light.png" alt="Description" style="position: fixed; top: 0px; right: 0px; z-index: 1000; width: 25vw">
@@ -19,11 +27,21 @@
       </a>      <a href="signup"><img src="sign-up.png" class="smooth-btn" alt="Sign Up" style="height: 4rem; margin-left: 10px; cursor: pointer;"></a>
     </div>
   </div>
-  <p style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666;">© 2026 NebulaStellaNova — Fan-made, not affiliated with Newgrounds or The Funkin' Crew, Inc.</p>
+  <p style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666; z-index: 101;">© 2026 NebulaStellaNova — Fan-made, not affiliated with Newgrounds or The Funkin' Crew, Inc.</p>
+
+  <img id="portrait" draggable="false" style="position: fixed; bottom: 0; right: 0; height: 55vh; z-index: 100; pointer-events: none; user-select: none;">
 
   <div class="irisEffect" style="z-index: 5000;"></div>
   <script src="script.js"></script>
   <script src="api.js"></script>
+  <script>
+    (async function() {
+      const files = await fetch(`${API}/portraits`).then(r => r.json()).catch(() => []);
+      if (!files.length) return;
+      const pick = files[Math.floor(Math.random() * files.length)];
+      document.getElementById('portrait').src = `${API}/portraits/${pick}`;
+    })();
+  </script>
   <script>
     (async function() {
       const token = localStorage.getItem('token');

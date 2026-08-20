@@ -7,6 +7,70 @@
 		<link rel="icon" type="image/png" href="../favicon.png">
 		<link rel="stylesheet" href="../style.css" type="text/css">
 		<link rel="stylesheet" href="style.css" type="text/css">
+	<style>
+		@media (max-width: 768px) {
+			body {
+				display: flex !important;
+				flex-direction: column !important;
+				align-items: stretch !important;
+				justify-content: flex-start !important;
+				overflow-y: auto !important;
+				height: auto !important;
+				min-height: 100vh !important;
+				padding-bottom: 4rem;
+			}
+			body > h1 {
+				position: static !important;
+				font-size: 2rem !important;
+				padding: 1rem 1rem 0.5rem;
+				text-align: center;
+				order: 1;
+			}
+			#search-box {
+				position: static !important;
+				width: calc(100% - 2rem) !important;
+				margin: 0.5rem 1rem 0 !important;
+				right: auto !important;
+				top: auto !important;
+				left: auto !important;
+				order: 2;
+			}
+			#mod-box-sort {
+				position: static !important;
+				width: calc(100% - 2rem) !important;
+				margin: 0.5rem 1rem 0 !important;
+				right: auto !important;
+				top: auto !important;
+				order: 3;
+			}
+			body > div:first-of-type {
+				position: static !important;
+				flex-direction: column !important;
+				width: calc(100% - 2rem) !important;
+				margin: 0.5rem 1rem 0 !important;
+				order: 4;
+			}
+			body > div:first-of-type .mod-box {
+				width: 100% !important;
+			}
+			#mod-grid-container {
+				position: static !important;
+				width: 100% !important;
+				height: auto !important;
+				left: auto !important;
+				right: auto !important;
+				top: auto !important;
+				bottom: auto !important;
+				overflow: visible !important;
+				padding: 0.5rem 1rem;
+				order: 5;
+			}
+			body > p {
+				font-size: 0.75rem !important;
+				order: 6;
+			}
+		}
+	</style>
 	</head>
 
 	<body>

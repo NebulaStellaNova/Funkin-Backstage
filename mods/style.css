@@ -10,10 +10,12 @@ img {
   transition: transform 0.2s ease;
   margin-top: -0.5rem;
 }
+
 .dropdown-arrow.flipped {
   transform: rotate(-180deg);
   transition: transform 0.3s ease;
 }
+
 .mod-box {
   padding: 20px;
   padding-top: 1.9vh;
@@ -26,11 +28,13 @@ img {
   height: 7vh;
   transition: height 0.3s ease;
 }
+
 .mod-box-header {
   display: flex;
   align-items: center;
   width: 100%;
 }
+
 .mod-box-content {
   opacity: 0;
   pointer-events: none;
@@ -38,20 +42,25 @@ img {
   transition: opacity 0s;
   margin-top: 1vh;
 }
+
 #mod-grid-container {
   scrollbar-gutter: stable;
 
 }
+
 #mod-grid-container::-webkit-scrollbar {
   width: 6px;
 }
+
 #mod-grid-container::-webkit-scrollbar-track {
   background: transparent;
 }
+
 #mod-grid-container::-webkit-scrollbar-thumb {
   background: #555;
   border-radius: 3px;
 }
+
 #mod-grid {
   font-family: 'FunkinLingLong', sans-serif;
   display: grid;
@@ -60,10 +69,12 @@ img {
   gap: 1rem;
   overflow-x: visible;
 }
+
 #search-box input::placeholder {
   color: #E1E1E1;
   opacity: 0.6;
 }
+
 .mod-box.expanded .mod-box-content {
   opacity: 1;
   pointer-events: auto;
@@ -78,20 +89,24 @@ img {
   width: 100%;
   z-index: 0;
 }
+
 .mod-label {
   position: relative;
   z-index: 1;
   margin-top: 0.8rem;
   margin-left: 2rem;
 }
+
 .mod-label h1 {
   margin: 0;
   line-height: 1.1;
 }
+
 .mod-card {
   position: relative;
   aspect-ratio: 1241 / 1065;
 }
+
 .mod-footer {
   color: #E1E1E1;
   position: absolute;
@@ -103,11 +118,13 @@ img {
   justify-content: space-between;
   align-items: center;
 }
+
 .mod-footer-left {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
+
 .mod-footer-right {
   display: flex;
   align-items: center;
@@ -120,8 +137,9 @@ img {
   right: 0.75rem;
   z-index: 2;
   height: 5.5vh;
-  border-radius: 5px; 
+  border-radius: 5px;
 }
+
 .mod-thumbnail {
   width: 23vw;
   margin-left: 1rem;
@@ -134,7 +152,32 @@ img {
   gap: 0.5rem;
   margin-bottom: 0.5rem;
 }
+
 .footer-piece h1 {
   margin: 0;
   line-height: 1;
 }
+
+@media (max-width: 768px) {
+  #mod-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mod-thumbnail {
+    width: 98%;
+    margin-left: 2%;
+    margin-top: 1%;
+  }
+
+  .mod-label {
+    position: relative;
+    margin-top: 0.5vh;
+    margin-left: 2rem;
+  }
+
+  .mod-box {
+    height: 5vh;
+    padding-top: 1vh;
+  }
+}
+
