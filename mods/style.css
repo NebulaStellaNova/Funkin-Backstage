@@ -93,7 +93,7 @@ img {
 .mod-label {
   position: relative;
   z-index: 1;
-  margin-top: 0.8rem;
+  margin-top: 0.4rem;
   margin-left: 2rem;
 }
 
@@ -142,7 +142,9 @@ img {
 }
 
 .mod-thumbnail {
-  width: 23vw;
+  width: calc(100% - 2rem);
+  height: 65%;
+  object-fit: cover;
   margin-left: 1rem;
   margin-top: 0.2rem;
 }
@@ -171,8 +173,10 @@ img {
   }
 
   .mod-thumbnail {
-    width: 98%;
-    margin-left: 2%;
+    width: calc(100% - 2rem);
+    height: 65%;
+    object-fit: cover;
+    margin-left: 1rem;
     margin-top: 1%;
   }
 
