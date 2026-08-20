@@ -149,9 +149,12 @@
     });
 
     let updating = false;
+    let scrollAfterUpdate = false;
     async function updateTheMessages() {
         if (updating) return;
         updating = true;
+        const doScroll = scrollAfterUpdate;
+        scrollAfterUpdate = false;
         try {
             var stickerList = await getStickers();
             var out = "";
@@ -177,15 +180,19 @@
             }
             const box = document.getElementById('chat-scroll');
             box.innerHTML = out;
-            const imgs = Array.from(box.querySelectorAll('img'));
-            const pending = imgs.filter(img => !img.complete);
-            if (pending.length === 0) {
-                box.scrollTop = box.scrollHeight;
-                updateThumb();
+            if (doScroll) {
+                const imgs = Array.from(box.querySelectorAll('img'));
+                const pending = imgs.filter(img => !img.complete);
+                if (pending.length === 0) {
+                    box.scrollTop = box.scrollHeight;
+                    updateThumb();
+                } else {
+                    let done = 0;
+                    const onSettle = () => { if (++done >= pending.length) { box.scrollTop = box.scrollHeight; updateThumb(); } };
+                    pending.forEach(img => { img.addEventListener('load', onSettle); img.addEventListener('error', onSettle); });
+                }
             } else {
-                let done = 0;
-                const onSettle = () => { if (++done >= pending.length) { box.scrollTop = box.scrollHeight; updateThumb(); } };
-                pending.forEach(img => { img.addEventListener('load', onSettle); img.addEventListener('error', onSettle); });
+                updateThumb();
             }
         } finally {
             updating = false;
@@ -221,6 +228,7 @@
             body: JSON.stringify({ user: id, contents: document.getElementById('chat-bar').value.trim() })
         });
         document.getElementById('chat-bar').value = "";
+        scrollAfterUpdate = true;
         updateTheMessages();
     }
 </script>
