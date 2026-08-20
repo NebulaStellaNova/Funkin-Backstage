@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Funkin' Backstage | Global Chat</title>
+
+  <meta property="og:title" content="Funkin' Backstage - Global Chat" />
+  <meta property="og:description" content="For Modders. By Modders." />
+  <meta property="og:image" content="https://funkinbackstage.com/favicon.png" />
+  <meta name="theme-color" content="#ad0054" />
+
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="../style.css" type="text/css">
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <style>
+    @media (max-width: 768px) {
+      html, body { overflow: hidden; }
+      body { align-items: flex-start; justify-content: center; padding-top: 10vh; }
+      h1 { font-size: 2.5rem; text-align: center; }
+      p:not(.footer-left):not(.footer-right) { font-size: 1.6rem; }
+      .footer-left, .footer-right { font-size: 0.75rem !important; }
+      .container div { display: flex !important; flex-direction: column; align-items: center; gap: 1rem; }
+      .container div img { height: 2.5rem !important; }
+      #portrait { height: 28vh !important; bottom: 0rem !important; }
+    }
+  </style>
+</head>
+<body style="display: flex; flex-direction: column; gap: 3vh; justify-content: center;">
+    <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 10vh;">Global Chat</h1>
+    <div class="ui-box" id="chat-box" style="width: 100rem; height: 65vh; gap: 2vh; justify-content: flex-end; display: flex; flex-direction: column; align-items: flex-start; overflow-y: auto;"></div>
+    <div class="ui-box" style="width: 100rem; height: 1rem; gap: 3vh">
+        <input type="text" placeholder="Type something to send..." style="background: transparent; border: none; outline: none; font-family: 'FunkinOptions', sans-serif; font-size: 4vh; color: #E1E1E1; width: 100%; caret-color: #E1E1E1; margin-top: 1vh;" />
+        <img src="icon-sticker.png" class="smooth-btn" style="width: 3.5vh; height: 4vh; margin-left: auto; flex-shrink: 0; cursor: pointer;"/>
+        <img src="icon-send.png" class="smooth-btn" style="width: 4vh; height: 4vh; margin-left: auto; flex-shrink: 0; cursor: pointer;" onclick="sendMessage()"/>
+    </div>
+</body>
+
+<script src="../api.js"></script>
+<script>
+    async function updateTheMessages() {
+        var out = "";
+        const messages = await fetch(`${API}/chat/read`).then(r => r.json());
+        for (const message of messages) {
+            const user = await fetch(`${API}/users/${message.poster}`).then(r => r.json());
+            out += `
+            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0rem; justify-content: start;">
+                <div style="display: flex; justify-content: flex-start; align-items: center; gap: 0.5vw">
+                    <img src="https://api.funkinbackstage.com/avatars/${user.id}.png" style="height: 5vh; border-radius: 50%"/>
+                    <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 4vh; margin-top: 1.5vh; color: #BABABA">${user.username}</h1>
+                </div>
+                <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 5vh; margin: 0;">${message.contents}</h1>
+            </div>
+            `
+        }
+        const box = document.getElementById('chat-box');
+        box.scrollTop = box.scrollHeight;
+        box.innerHTML = out;
+    }
+    updateTheMessages();
+    setInterval(updateTheMessages, 20);
+
+    async function sendMessage() {
+        const token = localStorage.getItem('token');
+        if (!token) { window.location.href = '../login'; return; }
+        const { id } = await fetch(`${API}/me`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({})
+        }).then(r => r.json());
+        console.log(id);
+    }
+</script>
+
+</html>
