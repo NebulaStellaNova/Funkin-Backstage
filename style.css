@@ -63,6 +63,13 @@ p {
   z-index: 101;
 }
 
+.footer-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .footer-desktop { display: none; }
+  .footer-mobile { display: inline; }
+}
+
 .footer-left a, .footer-right a {
   color: inherit;
   text-decoration: none;
