@@ -74,6 +74,7 @@ async function toggleLike(id, pieceEl) {
     const data = await res.json();
     pieceEl.querySelector('img').src = data.liked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
     pieceEl.querySelector('h1').textContent = fmtNum(data.likes);
+    reloadModList();
 }
 
 async function reloadModList() {
