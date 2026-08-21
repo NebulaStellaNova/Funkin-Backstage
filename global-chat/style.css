@@ -1,6 +1,6 @@
 .ui-box {
   padding: 5vh;
-  border-image: url('box-base.png') 18 fill / 18px stretch;
+  border-image: url('box-base.png') 18 fill / 10px stretch;
   border-image-outset: 0;
   font-family: 'FunkinLingLong', sans-serif;
   display: flex;
