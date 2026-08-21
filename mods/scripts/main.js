@@ -6,6 +6,7 @@ var categoryFilter = "any";
 var featuredFilter = false;
 var likedFilter = false;
 var filterCount = 0;
+var sortBackwards = false;
 
 function toggleLikedFilter() {
     likedFilter = !likedFilter;
@@ -105,26 +106,50 @@ async function reloadModList() {
         modDatas = modDatas.filter(_ => { return _.child == categoryFilter });
     }
 
-    switch (sortMethod) {
-        case "activity":
-            modDatas.sort((a, b) => {
-                const aDate = new Date(a.updateDate || a.uploadDate);
-                const bDate = new Date(b.updateDate || b.uploadDate);
-                return bDate - aDate;
-            });
-            break;
-        case "downloads":
-            modDatas.sort((a, b) => (b.downloads ?? 0) - (a.downloads ?? 0));
-            break;
-        case "likes":
-            modDatas.sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
-            break;
-        case "views":
-            modDatas.sort((a, b) => (b.views ?? 0) - (a.views ?? 0));
-            break;
-        case "date added":
-            modDatas.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
-            break;
+    if (sortBackwards) {
+        switch (sortMethod) {
+            case "activity":
+                modDatas.sort((a, b) => {
+                    const aDate = new Date(a.updateDate || a.uploadDate);
+                    const bDate = new Date(b.updateDate || b.uploadDate);
+                    return aDate - bDate;
+                });
+                break;
+            case "downloads":
+                modDatas.sort((a, b) => (a.downloads ?? 0) - (b.downloads ?? 0));
+                break;
+            case "likes":
+                modDatas.sort((a, b) => (a.likes ?? 0) - (b.likes ?? 0));
+                break;
+            case "views":
+                modDatas.sort((a, b) => (a.views ?? 0) - (b.views ?? 0));
+                break;
+            case "date added":
+                modDatas.sort((a, b) => new Date(a.uploadDate) - new Date(b.uploadDate));
+                break;
+        }
+    } else {
+        switch (sortMethod) {
+            case "activity":
+                modDatas.sort((a, b) => {
+                    const aDate = new Date(a.updateDate || a.uploadDate);
+                    const bDate = new Date(b.updateDate || b.uploadDate);
+                    return bDate - aDate;
+                });
+                break;
+            case "downloads":
+                modDatas.sort((a, b) => (b.downloads ?? 0) - (a.downloads ?? 0));
+                break;
+            case "likes":
+                modDatas.sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+                break;
+            case "views":
+                modDatas.sort((a, b) => (b.views ?? 0) - (a.views ?? 0));
+                break;
+            case "date added":
+                modDatas.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+                break;
+        }
     }
 
     var htmlOut = "";
@@ -201,8 +226,21 @@ function toggleBox(btn, boxId) {
     });
 
     if (isExpanding) {
-        box.style.height = box.scrollHeight + 'px';
+        box.style.height = box.scrollHeight + 'px'; 
         box.classList.add('expanded');
         btn.classList.add('flipped');
     }
+}
+
+function toggleDirection(btn) {
+    const flipped = btn.classList.contains('flipped');
+
+    if (flipped) {
+        btn.classList.remove('flipped');
+        sortBackwards = false;
+    } else {
+        btn.classList.add('flipped');
+        sortBackwards = true;
+    }
+    reloadModList();
 }
