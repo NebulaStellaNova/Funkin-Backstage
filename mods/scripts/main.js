@@ -163,7 +163,7 @@ async function reloadModList() {
         if (likedFilter && !isLiked) continue;
         const heartIcon = isLiked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
         htmlOut += `
-            <div class="mod-card">
+            <div class="mod-card" onclick="window.location.href='/mods/${id}'" style="cursor: pointer;">
                 <img draggable="false" src="${meta.thumbnails[0]}" class="mod-thumbnail">
                 <img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
                 <img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
