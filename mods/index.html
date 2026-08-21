@@ -7,156 +7,62 @@
 		<link rel="icon" type="image/png" href="../favicon.png">
 		<link rel="stylesheet" href="../style.css" type="text/css">
 		<link rel="stylesheet" href="style.css" type="text/css">
-	<style>
-		@media (max-width: 768px) {
-			body {
-				display: flex !important;
-				flex-direction: column !important;
-				align-items: stretch !important;
-				justify-content: flex-start !important;
-				overflow-y: auto !important;
-				height: auto !important;
-				min-height: 100vh !important;
-				padding-bottom: 4rem;
-			}
-			body > h1 {
-				position: static !important;
-				font-size: 2rem !important;
-				padding: 1rem 1rem 0.5rem;
-				text-align: center;
-				order: 1;
-			}
-			#search-box {
-				position: static !important;
-				width: calc(100% - 2rem) !important;
-				margin: 0.5rem 1rem 0 !important;
-				right: auto !important;
-				top: auto !important;
-				left: auto !important;
-				order: 2;
-			}
-			#mod-box-sort {
-				position: static !important;
-				width: calc(100% - 2rem) !important;
-				margin: 0.5rem 1rem 0 !important;
-				right: auto !important;
-				top: auto !important;
-				order: 3;
-			}
-			body > div:first-of-type {
-				position: static !important;
-				flex-direction: column !important;
-				width: calc(100% - 2rem) !important;
-				margin: 0.5rem 1rem 0 !important;
-				order: 4;
-			}
-			body > div:first-of-type .mod-box {
-				width: 100% !important;
-			}
-			#mod-grid-container {
-				position: static !important;
-				width: 100% !important;
-				height: auto !important;
-				left: auto !important;
-				right: auto !important;
-				top: auto !important;
-				bottom: auto !important;
-				overflow: visible !important;
-				padding: 0.5rem 1rem;
-				order: 5;
-			}
-			body > p {
-				font-size: 0.75rem !important;
-				order: 6;
-			}
-		}
-	</style>
 	</head>
 
 	<body>
-		<h1 style="font-family: 'FunkinLingLong', sans-serif; position: fixed; left: 2rem; top: 1rem; font-size: 7vh;">Mods</h1>
+		<h1 style="font-family: 'FunkinLingLong', sans-serif; position: fixed; left: 2rem; top: 1rem; font-size: 8vh;">Mods</h1>
 		<div style="display: flex; flex-direction: column; row-gap: 15px; position: fixed; top: 9rem; left: 2rem;">
 			<div class="mod-box" id="mod-box-1" style="width: 25vw;">
 				<div class="mod-box-header">
-					<h1 style="font-size: 3vh;">CATEGORY - ANY</h1>
+					<h1 id="category-text" style="font-size: 3vh;">CATEGORY - ANY</h1>
 					<div style="flex: 1;"></div>
-					<img draggable="false" src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-1')">
+					<img id="category-arrow" draggable="false" src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-1')">
 				</div>
 				<div class="mod-box-content" style="padding-left: 5%">
 					<div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
-					<h1 style="font-size: 3vh;">Full Mods</h1>
-					<h1 style="font-size: 3vh;">Ports</h1>
-					<h1 style="font-size: 3vh;">Scripts</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeCategoryFilter(this)">Any</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeCategoryFilter(this)">Full Mods</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeCategoryFilter(this)">Ports</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeCategoryFilter(this)">Scripts</h1>
 				</div>
 			</div>
 			<div class="mod-box" id="mod-box-2" style="width: 25vw;">
 				<div class="mod-box-header">
-					<h1 style="font-size: 3vh;">ENGINE - ANY</h1>
+					<h1 id="engine-text" style="font-size: 3vh;">ENGINE - ANY</h1>
 					<div style="flex: 1;"></div>
-					<img draggable="false" src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-2')">
+					<img id="engine-arrow" draggable="false" src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-2')">
 				</div>
 				<div class="mod-box-content" style="padding-left: 5%">
 					<div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
-					<h1 style="font-size: 3vh;">Base Game</h1>
-					<h1 style="font-size: 3vh;">Codename Engine</h1>
-					<h1 style="font-size: 3vh;">Psych Engine</h1>
-					<h1 style="font-size: 3vh;">Kade Engine</h1>
-					<h1 style="font-size: 3vh;">Other</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeEngineFilter(this)">Any</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeEngineFilter(this)">Base Game</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeEngineFilter(this)">Codename Engine</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeEngineFilter(this)">Psych Engine</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeEngineFilter(this)">Kade Engine</h1>
+					<h1 style="font-size: 3vh;" class="sort-item" onclick="changeEngineFilter(this)">Other</h1>
 				</div>
 			</div>
 			<div class="mod-box" id="mod-box-3" style="width: 25vw;">
 				<div class="mod-box-header">
-					<h1 style="font-size: 3vh;">FILTERS - 0</h1>
+					<h1 id="filter-text" style="font-size: 3vh;">FILTERS - 0</h1>
 					<div style="flex: 1;"></div>
 					<img draggable="false" src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-3')">
 				</div>
 				<div class="mod-box-content" style="padding-left: 5%">
 					<div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
 					<div style="display: flex; flex-direction: row; align-items: center; gap: 0.75rem; width: 100%">
-						<img draggable="false" class="check-box" src="assets/checkbox-empty.png" style="height: 2.5vh; cursor: pointer;" onclick="toggleTick(this)">
+						<img draggable="false" class="check-box" src="assets/checkbox-empty.png" style="height: 2.5vh; cursor: pointer;" onclick="toggleTick(this); toggleFeaturedFilter()">
 						<h1 style="font-size: 3vh; line-height: 1; margin-top: 0.6rem;">Featured</h1>
+					</div>
+					<div style="display: flex; flex-direction: row; align-items: center; gap: 0.75rem; width: 100%">
+						<img draggable="false" class="check-box" src="assets/checkbox-empty.png" style="height: 2.5vh; cursor: pointer;" onclick="toggleTick(this); toggleLikedFilter()">
+						<h1 style="font-size: 3vh; line-height: 1; margin-top: 0.6rem;">Liked</h1>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div id="mod-grid-container" style="position: fixed; top: calc(9rem + 7vh + 1.5rem); left: calc(2rem + 25vw + 1.5rem); right: 1.2rem; bottom: 3rem; overflow-y: auto; overflow-x: hidden;">
-			<div id="mod-grid">
-				<!-- <div class="mod-card">
-					<img draggable="false" src="https://images.gamebanana.com/img/ss/mods/602ad2dd9c20e.jpg" class="mod-thumbnail">
-					<img draggable="false" src="https://images.gamebanana.com/img/av/6a07718283568.png" class="mod-topleft">
-					<img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
-					<div class="mod-label">
-						<h1 style="font-size: 3vh;">V.S. Whitty Full Week</h1>
-						<h1 style="font-size: 2vh; color: #C7C7C7;">Can You Handle a Week of Whitty?</h1>
-					</div>
-					<div class="mod-footer">
-						<div class="mod-footer-left">
-							<div id="downloads" class="footer-piece">
-								<img draggable="false" src="assets/icon-download.png" style="height: 1.8vh;">
-								<h1 style="font-size: 2vh;">3.7M</h1>
-							</div>
-							<div id="likes" class="footer-piece">
-								<img draggable="false" src="assets/icon-heart.png" style="height: 1.8vh;">
-								<h1 style="font-size: 2vh;">2.2K</h1>
-							</div>
-							<div id="views" class="footer-piece">
-								<img draggable="false" src="assets/icon-views.png" style="height: 1.8vh;">
-								<h1 style="font-size: 2vh;">8.9M</h1>
-							</div>
-						</div>
-						<div class="mod-footer-right">
-							<div id="featured" class="footer-piece">
-								<img draggable="false" src="assets/icon-featured.png" style="height: 1.8vh;">
-								<h1 style="font-size: 2vh;">FEATURED</h1>
-							</div>
-							<div id="updated" class="footer-piece">
-								<img draggable="false" src="assets/icon-updated.png" style="height: 1.8vh;">
-								<h1 style="font-size: 2vh;">5Y</h1>
-							</div>
-						</div>
-					</div> -->
-				</div>
-			</div>
+			<div id="mod-grid"></div>
 		</div>
 		<div class="mod-box" id="search-box" style="position: fixed; top: 9rem; left: calc(2rem + 25vw + 1.5rem); right: calc(2rem + 18vw + 1.5rem); flex-direction: row; align-items: center; height: 7vh; padding: 0 1.5rem 0 3rem; gap: 0.75rem;">
 			<img draggable="false" src="assets/icon-search.png" style="height: 2.5vh; opacity: 0.7; flex-shrink: 0;">
@@ -164,119 +70,21 @@
 		</div>
 		<div class="mod-box" id="mod-box-sort" style="position: fixed; top: 9rem; right: 2rem; width: 18vw;">
 			<div class="mod-box-header">
-				<h1 style="font-size: 3vh;">SORT - ACTIVITY</h1>
+				<h1 id="sort-text" style="font-size: 3vh;">SORT - ACTIVITY</h1>
 				<div style="flex: 1;"></div>
-				<img draggable="false" src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-sort')">
+				<img id="sort-arrow" draggable="false" src="assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-right: 2rem; cursor: pointer;" onclick="toggleBox(this, 'mod-box-sort')">
 			</div>
 			<div class="mod-box-content" style="padding-left: 5%">
 				<div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
-				<h1 style="font-size: 3vh;">Activity</h1>
-				<h1 style="font-size: 3vh;">Downloads</h1>
-				<h1 style="font-size: 3vh;">Likes</h1>
-				<h1 style="font-size: 3vh;">Date Added</h1>
+				<h1 style="font-size: 3vh;" class="sort-item" onclick="changeSort(this)">Activity</h1>
+				<h1 style="font-size: 3vh;" class="sort-item" onclick="changeSort(this)">Downloads</h1>
+				<h1 style="font-size: 3vh;" class="sort-item" onclick="changeSort(this)">Likes</h1>
+				<h1 style="font-size: 3vh;" class="sort-item" onclick="changeSort(this)">Views</h1>
+				<h1 style="font-size: 3vh;" class="sort-item" onclick="changeSort(this)">Date Added</h1>
 			</div>
 		</div>
-		<script src="scripts/main.js"></script>
 		<script src="../api.js"></script>
-		<script>
-			function fmtNum(n) {
-				if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-				if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
-				return String(n);
-			}
-
-			function relTime(dateStr) {
-				const diff = Date.now() - new Date(dateStr).getTime();
-				const s = Math.floor(diff / 1000);
-				if (s < 3600)   return Math.max(1, Math.floor(s / 60)) + 'm';
-				if (s < 86400)  return Math.floor(s / 3600) + 'h';
-				if (s < 2592000) return Math.floor(s / 86400) + 'd';
-				if (s < 31536000) return Math.floor(s / 2592000) + 'mo';
-				return Math.floor(s / 31536000) + 'y';
-			}
-
-			async function toggleLike(id, pieceEl) {
-				const token = localStorage.getItem('token');
-				if (!token) { window.location.href = '../login'; return; }
-				const res = await fetch(`${API}/submissions/${id}/like`, {
-					method: 'POST',
-					headers: { 'Authorization': `Bearer ${token}` }
-				});
-				if (!res.ok) return;
-				const data = await res.json();
-				pieceEl.querySelector('img').src = data.liked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
-				pieceEl.querySelector('h1').textContent = fmtNum(data.likes);
-			}
-
-			(async function() {
-				const token = localStorage.getItem('token');
-				let likedSubmissions = [];
-				if (token) {
-					const meRes = await fetch(`${API}/me`, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-						body: JSON.stringify({})
-					});
-					if (meRes.ok) likedSubmissions = (await meRes.json()).likedSubmissions ?? [];
-				}
-
-				const files = await fetch(`${API}/submissions`).then(r => r.json()).catch(() => []);
-				if (!files.length) return;
-				for (const id of files) {
-					const meta = await fetch(`${API}/submissions/${id}/meta.json`).then(r => r.json());
-					if (!meta.live) continue;
-					const isLiked = likedSubmissions.includes(id);
-					const heartIcon = isLiked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
-
-					const parentElement = document.getElementById("mod-grid");
-					const subElement = document.createElement(`mod-${id}`);
-					subElement.innerHTML = `
-						<div class="mod-card">
-							<img draggable="false" src="${meta.thumbnails[0]}" class="mod-thumbnail">
-							<img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
-							<img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
-							<div class="mod-label">
-								<h1 style="font-size: 3vh;">${meta.title}</h1>
-								<h1 style="font-size: 2vh; color: #C7C7C7;">${meta.blurb}</h1>
-							</div>
-							<div class="mod-footer">
-								<div class="mod-footer-left">
-									<div class="footer-piece">
-										<img draggable="false" src="assets/icon-download.png" style="height: 1.8vh;">
-										<h1 style="font-size: 2vh;">${fmtNum(meta.downloads ?? 0)}</h1>
-									</div>
-									<div class="footer-piece" style="cursor: ${token ? 'pointer' : 'default'};" onclick="toggleLike('${id}', this)">
-										<img draggable="false" src="${heartIcon}" style="height: 1.8vh;">
-										<h1 style="font-size: 2vh;">${fmtNum(meta.likes ?? 0)}</h1>
-									</div>
-									<div class="footer-piece">
-										<img draggable="false" src="assets/icon-views.png" style="height: 1.8vh;">
-										<h1 style="font-size: 2vh;">${fmtNum(meta.views ?? 0)}</h1>
-									</div>
-								</div>
-								<div class="mod-footer-right">
-									${meta.stars > 0 ? `
-									<div class="footer-piece">
-										<img draggable="false" src="assets/icon-featured.png" style="height: 1.8vh;">
-										<h1 style="font-size: 2vh;">FEATURED</h1>
-									</div>` : ``}
-									${meta.updateDate == "" ? `
-									<div class="footer-piece">
-										<img draggable="false" src="assets/icon-plus.png" style="height: 1.8vh;">
-										<h1 style="font-size: 2vh;">${relTime(meta.uploadDate)}</h1>
-									</div>` : `
-									<div class="footer-piece">
-										<img draggable="false" src="assets/icon-updated.png" style="height: 1.8vh;">
-										<h1 style="font-size: 2vh;">${relTime(meta.updateDate)}</h1>
-									</div>`}
-								</div>
-							</div>
-						</div>
-					`;
-					parentElement.appendChild(subElement);
-				}
-			})();
-		</script>
+		<script src="scripts/main.js"></script>
 		<p class="footer-left" style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666;"></p>
 		<p class="footer-right" style="position: fixed; bottom: 1rem; right: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666; text-align: right;"></p>
 		<div style="position: fixed; top: 1rem; right: 2rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666; text-align: right; display: flex; align-items: center; gap: 2rem;">
