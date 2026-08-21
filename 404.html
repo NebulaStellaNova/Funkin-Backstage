@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		var path = window.location.pathname;
+		var modsMatch = path.match(/^\/mods\/([^/]+)\/?$/);
+		if (modsMatch) {
+			sessionStorage.setItem('modId', modsMatch[1]);
+			window.location.replace('/mods/view/');
+		}
+	</script>
+</head>
+<body></body>
+</html>
