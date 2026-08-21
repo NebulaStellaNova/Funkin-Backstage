@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Funkin' Backstage | Mod</title>
+		<title>Funkin' Backstage</title>
 		<link rel="icon" type="image/png" href="../../favicon.png">
 		<link rel="stylesheet" href="../../style.css" type="text/css">
 		<link rel="stylesheet" href="../../global-chat/style.css" type="text/css">
@@ -111,6 +111,7 @@
 			async function populateData() {
 				const meta = await fetch(`${API}/submissions/${modId}/meta.json`).then(r => r.json());
 				const user = await fetch(`${API}/users/${meta.submitter}`).then(r => r.json());
+				document.title = "Funkin' Backstage | " + meta.title;
 				document.getElementById('title-text').textContent = meta.title;
 				document.getElementById('author-text').textContent = `• ${user.username}`;
 				document.getElementById('mod-description').innerHTML = meta.description.replace(/\n/g, "<br>");
