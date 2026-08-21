@@ -8,6 +8,11 @@
 		<link rel="stylesheet" href="../../style.css" type="text/css">
 		<link rel="stylesheet" href="../../global-chat/style.css" type="text/css">
 		<style>
+
+			.download-button:hover {
+				cursor: pointer;
+			}
+
 			body {
 				align-items: flex-start;
 				padding-top: 5vh;
@@ -80,7 +85,7 @@
 					</div>
 				</div>
 				<div class="ui-box" style="padding: 3vh; padding-left: 2vw; width: 100%">
-					<span id="mod-description" style="font-size: 4vh;"></span>
+					<span id="mod-description" style="font-size: 4vh; font-family: 'FunkinOptions', sans-serif;"></span>
 				</div>
 				
 				<div style="display: flex; gap: 1vw;">
@@ -113,9 +118,9 @@
 
 				for (const dlData of meta.dls) {
 					console.log(dlData);
-					document.getElementById("downloads-box").innerHTML += `<div style="display: flex">
-						<img src="https://funkinbackstage.com/mods/view/icon-download.png"/>
-						<a>Text<a>
+					document.getElementById("downloads-box").innerHTML += `<div style="display: flex; gap: 0.5vw; align-items: center;">
+						<img class="download-button" style="width: 5vh; height: 5vh" src="https://funkinbackstage.com/mods/view/icon-download.png" onclick="window.open('${dlData.url}', '_blank')"/>
+						<a style="font-size: 5vh">v${dlData.version}</a>
 					</div>`;
 				}
 			}
