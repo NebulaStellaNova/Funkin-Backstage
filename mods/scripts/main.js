@@ -47,6 +47,10 @@ function changeCategoryFilter(element) {
     toggleBox(document.getElementById('category-arrow'), 'mod-box-1');
 }
 
+function firstImageThumb(thumbnails) {
+    return thumbnails.find(t => !/\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(t)) || thumbnails[0];
+}
+
 function fmtNum(n) {
     if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
     if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
@@ -164,7 +168,7 @@ async function reloadModList() {
         const heartIcon = isLiked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
         htmlOut += `
             <div class="mod-card" onclick="sessionStorage.setItem('modId','${id}');window.location.href='/mods/view/'" style="cursor: pointer;">
-                <img draggable="false" src="${meta.thumbnails[0]}" class="mod-thumbnail">
+                <img draggable="false" src="${firstImageThumb(meta.thumbnails)}" class="mod-thumbnail">
                 <img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
                 <img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
                 <div class="mod-label">

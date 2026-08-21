@@ -30,7 +30,8 @@
 				width: 100%;
 				height: 100%;
 			}
-			.thumbnail-wrapper img {
+			.thumbnail-wrapper img,
+			.thumbnail-wrapper video {
 				position: absolute;
 				inset: 0;
 				width: 100%;
@@ -80,8 +81,12 @@
 					</div>
 					<div class="ui-box" style="padding: 0.5rem; width: 75%; height: 100%">
 						<div class="thumbnail-wrapper">
-							<img id="thumbnail-a" style="opacity: 1;"/>
-							<img id="thumbnail-b" style="opacity: 0;"/>
+							<div id="thumbnail-a" style="opacity: 1; position: absolute; inset: 0; transition: opacity 0.3s ease;"></div>
+							<div id="thumbnail-b" style="opacity: 0; position: absolute; inset: 0; transition: opacity 0.3s ease;"></div>
+							<div id="video-controls" style="display:none; position:absolute; bottom:10px; right:10px; z-index:10; gap:6px; flex-direction:row;">
+								<img id="btn-play" onclick="toggleVideoPlay()" draggable="false" src="https://funkinbackstage.com/mods/view/icon-playing.png" style="width:2.5vw; height:2.5vw; cursor:pointer; user-select:none;">
+								<img id="btn-mute" onclick="toggleVideoMute()" draggable="false" src="https://funkinbackstage.com/mods/view/icon-muted.png" style="width:2.5vw; height:2.5vw; cursor:pointer; user-select:none;">
+							</div>
 						</div>
 					</div>
 					<div class="thumbnail-box thumbnail-box-right" style="width: 12.5%; height: 100%; display:flex; justify-content: center; align-items: center;" onclick="scrollThumbnail(1)">
@@ -92,10 +97,12 @@
 					<span id="mod-description" style="font-size: 3vh; font-family: 'FunkinOptions', sans-serif;"></span>
 				</div>
 				
-				<div style="display: flex; gap: 1vw;">
-					<div id="downloads-box" class="ui-box" style="padding: 3vh; padding-left: 2vw; width: 75%">
+				<div style="display: flex; gap: 0.35vw;">
+					<div id="downloads-box" class="ui-box" style="padding: 2vh; width: 33.333333%; justify-content: center;">
 					</div>
-					<div class="ui-box" style="padding: 3vh; padding-left: 2vw; width: 25%">
+					<div class="ui-box" style="padding: 2vh; width: 33.333333%">
+					</div>
+					<div class="ui-box" style="padding: 2vh; width: 33.333333%">
 					</div>
 				</div>
 			</div>
@@ -108,6 +115,19 @@
 			var curThumbnail = 0;
 			var activeSlot = 'a';
 
+			function isVideo(url) {
+				return /\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(url);
+			}
+
+			function setSlot(slotId, url) {
+				const slot = document.getElementById(slotId);
+				if (isVideo(url)) {
+					slot.innerHTML = `<video src="${url}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:contain;"></video>`;
+				} else {
+					slot.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:contain;">`;
+				}
+			}
+
 			async function populateData() {
 				const meta = await fetch(`${API}/submissions/${modId}/meta.json`).then(r => r.json());
 				const user = await fetch(`${API}/users/${meta.submitter}`).then(r => r.json());
@@ -115,21 +135,52 @@
 				document.getElementById('title-text').textContent = meta.title;
 				document.getElementById('author-text').textContent = `• ${user.username}`;
 				document.getElementById('mod-description').innerHTML = meta.description.replace(/\n/g, "<br>");
-				document.getElementById('thumbnail-a').src = meta.thumbnails[0];
+				setSlot('thumbnail-a', meta.thumbnails[0]);
 
 				thumbnails = meta.thumbnails;
 				for (const thumb of thumbnails)
-					document.createElement('img').src = thumb;
+					if (!isVideo(thumb)) { const i = new Image(); i.src = thumb; }
+				updateVideoControls();
 
 				for (const dlData of meta.dls) {
 					console.log(dlData);
 					document.getElementById("downloads-box").innerHTML += `<div style="display: flex; gap: 0.5vw; align-items: center;">
 						<img class="download-button" style="width: 5vh; height: 5vh" src="https://funkinbackstage.com/mods/view/icon-download.png" onclick="window.open('${dlData.url}', '_blank')"/>
-						<a style="font-size: 5vh">v${dlData.version}</a>
+						<a style="font-size: 6vh">v${dlData.version}</a>
 					</div>`;
 				}
 			}
 			populateData();
+
+			function getActiveVideo() {
+				return document.querySelector('#thumbnail-' + activeSlot + ' video');
+			}
+
+			const BASE = 'https://funkinbackstage.com/mods/view/';
+
+			function updateVideoControls() {
+				const isVid = thumbnails.length > 0 && isVideo(thumbnails[curThumbnail]);
+				const ctrl = document.getElementById('video-controls');
+				ctrl.style.display = isVid ? 'flex' : 'none';
+				if (isVid) {
+					document.getElementById('btn-play').src = BASE + 'icon-playing.png';
+					document.getElementById('btn-mute').src = BASE + 'icon-muted.png';
+				}
+			}
+
+			function toggleVideoPlay() {
+				const v = getActiveVideo();
+				if (!v) return;
+				if (v.paused) { v.play(); document.getElementById('btn-play').src = BASE + 'icon-playing.png'; }
+				else { v.pause(); document.getElementById('btn-play').src = BASE + 'icon-paused.png'; }
+			}
+
+			function toggleVideoMute() {
+				const v = getActiveVideo();
+				if (!v) return;
+				v.muted = !v.muted;
+				document.getElementById('btn-mute').src = BASE + (v.muted ? 'icon-muted.png' : 'icon-ummuted.png');
+			}
 
 			function scrollThumbnail(amt) {
 				curThumbnail += amt;
@@ -139,10 +190,11 @@
 				const incoming = activeSlot === 'a' ? 'b' : 'a';
 				const outgoing = activeSlot;
 
-				document.getElementById('thumbnail-' + incoming).src = thumbnails[curThumbnail];
+				setSlot('thumbnail-' + incoming, thumbnails[curThumbnail]);
 				document.getElementById('thumbnail-' + incoming).style.opacity = '1';
 				document.getElementById('thumbnail-' + outgoing).style.opacity = '0';
 				activeSlot = incoming;
+				updateVideoControls();
 			}
 		</script>
 	</body>
