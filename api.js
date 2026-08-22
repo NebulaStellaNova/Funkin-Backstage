@@ -10,4 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
     el.innerHTML = `<span class="footer-desktop">${FOOTER_LEFT}</span><span class="footer-mobile">${FOOTER_LEFT_MOBILE}</span>`;
   });
   document.querySelectorAll('.footer-right').forEach(el => el.innerHTML = FOOTER_RIGHT);
+
+  const path = window.location.pathname;
+  const isRoot = path === '/' || path === '/index.html';
+  if (!isRoot) {
+    const depth = path.split('/').filter(Boolean).length;
+    const prefix = depth > 0 ? '../'.repeat(depth) : '';
+    const btn = document.createElement('a');
+    btn.href = '/';
+    btn.id = 'home-btn';
+    btn.style.cssText = 'position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:9999;display:block;opacity:0.85;transition:opacity 0.2s,transform 0.2s;';
+    const img = document.createElement('img');
+    img.src = `https://files.funkinbackstage.com/home_button.png`;
+    img.alt = 'Home';
+    img.draggable = false;
+    img.style.cssText = 'height:10rem;display:block;';
+    btn.appendChild(img);
+    btn.style.transformOrigin = 'right center';
+    btn.addEventListener('mouseenter', () => { btn.style.opacity = '1'; btn.style.transform = 'translateY(-50%) scale(1.08)'; });
+    btn.addEventListener('mouseleave', () => { btn.style.opacity = '0.85'; btn.style.transform = 'translateY(-50%)'; });
+    document.body.appendChild(btn);
+  }
 });
