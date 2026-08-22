@@ -100,11 +100,7 @@
 				<div style="display: flex; gap: 0.35vw;">
 					<div id="downloads-box" class="ui-box" style="padding: 2vh; width: 33.333333%; justify-content: center;">
 					</div>
-					<div id="like-box" class="ui-box" style="padding: 2vh; width: 33.333333%; justify-content: center;">
-						<div style="display: flex; gap: 0.5vw; align-items: center; cursor: pointer; user-select: none;" onclick="toggleLike()">
-							<img id="like-icon" draggable="false" style="width: 5vh; height: 5vh;" src="https://funkinbackstage.com/mods/view/icon-like-empty.png"/>
-							<a id="like-count" style="font-size: 6vh">0</a>
-						</div>
+					<div class="ui-box" style="padding: 2vh; width: 33.333333%">
 					</div>
 					<div class="ui-box" style="padding: 2vh; width: 33.333333%">
 					</div>
@@ -135,8 +131,6 @@
 				}
 			}
 
-			var liked = false;
-
 			async function populateData() {
 				const meta = await fetch(`${API}/submissions/${modId}/meta.json`).then(r => r.json());
 				const user = await fetch(`${API}/users/${meta.submitter}`).then(r => r.json());
@@ -158,42 +152,8 @@
 						<a style="font-size: 6vh">v${dlData.version}</a>
 					</div>`;
 				}
-
-				if (meta.likes !== undefined) document.getElementById('like-count').textContent = `${meta.likes}`;
-
-				const token = localStorage.getItem('token');
-				if (token) {
-					const likeRes = await fetch(`${API}/submissions/${modId}/like`, {
-						headers: { 'Authorization': `Bearer ${token}` }
-					}).catch(() => null);
-					if (likeRes && likeRes.ok) {
-						const likeData = await likeRes.json().catch(() => null);
-						if (likeData && likeData.liked) setLiked(true);
-					}
-				}
 			}
 			populateData();
-
-			function setLiked(state) {
-				liked = state;
-				document.getElementById('like-icon').src = `https://funkinbackstage.com/mods/view/icon-like-${state ? 'filled' : 'empty'}.png`;
-			}
-
-			async function toggleLike() {
-				const token = localStorage.getItem('token');
-				if (!token) return;
-				const newState = !liked;
-				setLiked(newState);
-				const countEl = document.getElementById('like-count');
-				countEl.textContent = parseInt(countEl.textContent) + (newState ? 1 : -1);
-				await fetch(`${API}/submissions/${modId}/like`, {
-					method: newState ? 'POST' : 'DELETE',
-					headers: { 'Authorization': `Bearer ${token}` }
-				}).catch(() => {
-					setLiked(!newState);
-					countEl.textContent = parseInt(countEl.textContent) + (newState ? -1 : 1);
-				});
-			}
 
 			function getActiveVideo() {
 				return document.querySelector('#thumbnail-' + activeSlot + ' video');
