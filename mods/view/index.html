@@ -102,7 +102,7 @@
 					</div>
 					<div id="like-box" class="ui-box" style="padding: 2vh; width: 33.333333%; justify-content: center;">
 						<div style="display: flex; gap: 0.5vw; align-items: center; cursor: pointer; user-select: none;" onclick="toggleLike()">
-							<img id="like-icon" draggable="false" style="width: 5vh; height: 5vh;" src="https://funkinbackstage.com/mods/view/icon-like-filled.png"/>
+							<img id="like-icon" draggable="false" style="width: 5vh; height: 5vh;" src="https://funkinbackstage.com/mods/view/icon-like-empty.png"/>
 							<a id="like-count" style="font-size: 6vh">0</a>
 						</div>
 					</div>
@@ -178,7 +178,7 @@
 
 			function setLiked(state) {
 				liked = state;
-				document.getElementById('like-icon').src = `https://funkinbackstage.com/mods/view/icon-like-${state ? 'empty' : 'filled'}.png`;
+				document.getElementById('like-icon').src = `https://funkinbackstage.com/mods/view/icon-like-${state ? 'filled' : 'empty'}.png`;
 			}
 
 			async function toggleLike() {
