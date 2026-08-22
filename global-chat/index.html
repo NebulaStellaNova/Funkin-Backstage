@@ -274,7 +274,10 @@
     };
 
     updateTheMessages();
-    setInterval(updateTheMessages, 2000);
+    const messageStream = new EventSource(`${API}/chat/message-stream`);
+    messageStream.onmessage = () => updateTheMessages();
+    // fallback re-sync every 30s in case SSE misses anything
+    setInterval(updateTheMessages, 30000);
 
     function addSticker(id) {
         document.getElementById('chat-bar').value += `:${id}: `;
