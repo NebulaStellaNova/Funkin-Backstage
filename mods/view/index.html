@@ -101,9 +101,9 @@
 					<div id="downloads-box" class="ui-box" style="padding: 2vh; width: 33.333333%; justify-content: center;">
 					</div>
 					<div id="like-box" class="ui-box" style="padding: 2vh; width: 33.333333%; justify-content: center;">
-						<div class="like-piece" style="display: flex; gap: 0.5vw; align-items: center; cursor: pointer; user-select: none;" onclick="toggleLike(this)">
-							<img draggable="false" style="width: 5vh; height: 5vh;" src="https://funkinbackstage.com/mods/view/icon-like-empty.png"/>
-							<a style="font-size: 6vh">0</a>
+						<div style="display: flex; gap: 0.5vw; align-items: center; cursor: pointer; user-select: none;" onclick="toggleLike()">
+							<img id="like-icon" draggable="false" style="width: 5vh; height: 5vh;" src="https://funkinbackstage.com/mods/view/icon-like-filled.png"/>
+							<a id="like-count" style="font-size: 6vh">0</a>
 						</div>
 					</div>
 					<div class="ui-box" style="padding: 2vh; width: 33.333333%">
@@ -135,6 +135,8 @@
 				}
 			}
 
+			var liked = false;
+
 			async function populateData() {
 				const meta = await fetch(`${API}/submissions/${modId}/meta.json`).then(r => r.json());
 				const user = await fetch(`${API}/users/${meta.submitter}`).then(r => r.json());
@@ -157,7 +159,7 @@
 					</div>`;
 				}
 
-				if (meta.likes !== undefined) document.querySelector('.like-piece a').textContent = meta.likes;
+				if (meta.likes !== undefined) document.getElementById('like-count').textContent = `${meta.likes}`;
 
 				const token = localStorage.getItem('token');
 				if (token) {
@@ -165,18 +167,21 @@
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
 						body: JSON.stringify({})
-					});
-					if (meRes.ok) {
-						const meData = await meRes.json();
-						const likedSubmissions = meData.likedSubmissions ?? [];
-						if (likedSubmissions.includes(modId))
-							document.querySelector('.like-piece img').src = 'https://funkinbackstage.com/mods/view/icon-like-filled.png';
+					}).catch(() => null);
+					if (meRes && meRes.ok) {
+						const meData = await meRes.json().catch(() => null);
+						if (meData && (meData.likedSubmissions ?? []).includes(modId)) setLiked(true);
 					}
 				}
 			}
 			populateData();
 
-			async function toggleLike(pieceEl) {
+			function setLiked(state) {
+				liked = state;
+				document.getElementById('like-icon').src = `https://funkinbackstage.com/mods/view/icon-like-${state ? 'empty' : 'filled'}.png`;
+			}
+
+			async function toggleLike() {
 				const token = localStorage.getItem('token');
 				if (!token) { window.location.href = '/login'; return; }
 				const res = await fetch(`${API}/submissions/${modId}/like`, {
@@ -185,10 +190,8 @@
 				});
 				if (!res.ok) return;
 				const data = await res.json();
-				pieceEl.querySelector('img').src = data.liked
-					? 'https://funkinbackstage.com/mods/view/icon-like-filled.png'
-					: 'https://funkinbackstage.com/mods/view/icon-like-empty.png';
-				pieceEl.querySelector('a').textContent = data.likes;
+				setLiked(data.liked);
+				document.getElementById('like-count').textContent = data.likes;
 			}
 
 			function getActiveVideo() {
