@@ -172,7 +172,7 @@ async function reloadModList() {
         if (likedFilter && !isLiked) continue;
         const heartIcon = isLiked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
         htmlOut += `
-            <div class="mod-card" onclick="sessionStorage.setItem('modId','${id}');window.location.href='/mods/view/'" style="cursor: pointer;">
+            <a class="mod-card" href="/mods/view/" onclick="sessionStorage.setItem('modId','${id}')" style="cursor:pointer;display:block;text-decoration:none;">
                 <img draggable="false" src="${firstImageThumb(meta.thumbnails)}" class="mod-thumbnail" style="display:block;">
                 <img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
                 ${isAdmin ? `<div class="mod-delete-btn" onclick="event.stopPropagation();deleteSubmission('${id}',this.closest('.mod-card'))">✕</div>` : ''}
@@ -213,7 +213,7 @@ async function reloadModList() {
                         </div>`}
                     </div>
                 </div>
-            </div>
+            </a>
         `;
     }
     parentElement.innerHTML = htmlOut;
