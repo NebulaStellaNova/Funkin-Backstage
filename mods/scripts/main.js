@@ -103,7 +103,7 @@ async function reloadModList() {
     var filesArray = Array.from(files);
     var modDatas = [];
     for (const id of files) {
-        const meta = await fetch(`${API}/submissions/${id}/meta.json`).then(r => r.json());
+        const meta = await fetch(`${API}/submissions/${id}/meta.json`, { cache: 'no-store' }).then(r => r.json());
         if (!meta.live) continue;
         meta.storageID = id;
         modDatas.push(meta);
@@ -172,7 +172,7 @@ async function reloadModList() {
         if (likedFilter && !isLiked) continue;
         const heartIcon = isLiked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
         htmlOut += `
-            <a class="mod-card" href="/mods/view/" onclick="sessionStorage.setItem('modId','${id}')" tabindex="-1" style="cursor:pointer;display:block;text-decoration:none;color:#E1E1E1;">
+            <a class="mod-card" href="/mods/view/" onclick="sessionStorage.setItem('modId','${id}')" tabindex="-1" onkeydown="return false;" style="cursor:pointer;display:block;text-decoration:none;color:#E1E1E1;">
                 <img draggable="false" src="${firstImageThumb(meta.thumbnails)}" class="mod-thumbnail" style="display:block;">
                 <img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
                 ${isAdmin ? `<div class="mod-delete-btn" onclick="event.stopPropagation();deleteSubmission('${id}',this.closest('.mod-card'))">✕</div><div class="mod-star-btn" data-stars="${meta.stars ?? 0}" onclick="event.stopPropagation();setStars('${id}',${meta.stars ?? 0},this)">★ ${meta.stars ?? 0}</div>` : ''}
@@ -225,6 +225,7 @@ modUpdateStream.onmessage = () => reloadModList();
 
 
 async function setStars(id, current, btn) {
+    document.activeElement?.blur();
     const input = prompt(`Stars for mod #${id} (0-5):`, btn.dataset.stars ?? current);
     if (input === null) return;
     const stars = parseInt(input, 10);
