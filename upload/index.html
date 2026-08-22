@@ -356,9 +356,9 @@
 			const iconFile = document.getElementById('icon-input').files[0] || null;
 			const downloadFile = document.getElementById('download-input').files[0] || null;
 
-			const ownershipData = Array.from(document.querySelectorAll('.ownership-row')).map(row => ({
-				name: row.querySelector('.owner-username').value.trim(),
-				role: row.querySelector('.owner-role').value.trim()
+			const ownershipData = Array.from(document.querySelectorAll('#ownership-rows .ownership-row')).map(row => ({
+				username: row.querySelector('input.owner-username').value.trim(),
+				role: row.querySelector('input.owner-role').value.trim()
 			})).filter(o => o.username);
 
 			if (!title) { alert('Mod title is required.'); return; }
