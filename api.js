@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.id = 'home-btn';
     btn.style.cssText = 'position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:9999;display:block;opacity:0.85;transition:opacity 0.2s,transform 0.2s;';
     const img = document.createElement('img');
+    img.draggable = false;
     img.src = `https://files.funkinbackstage.com/home_button.png`;
     img.alt = 'Home';
     img.draggable = false;
