@@ -220,6 +220,9 @@ async function reloadModList() {
 }
 reloadModList();
 
+const modUpdateStream = new EventSource(`${API}/mods/update-stream`);
+modUpdateStream.onmessage = () => reloadModList();
+
 
 async function setStars(id, current, btn) {
     const input = prompt(`Stars for mod #${id} (0-5):`, btn.dataset.stars ?? current);
