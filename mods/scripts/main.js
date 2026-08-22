@@ -175,7 +175,7 @@ async function reloadModList() {
             <a class="mod-card" href="/mods/view/" onclick="sessionStorage.setItem('modId','${id}')" style="cursor:pointer;display:block;text-decoration:none;color:#E1E1E1;">
                 <img draggable="false" src="${firstImageThumb(meta.thumbnails)}" class="mod-thumbnail" style="display:block;">
                 <img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
-                ${isAdmin ? `<div class="mod-delete-btn" onclick="event.stopPropagation();deleteSubmission('${id}',this.closest('.mod-card'))">✕</div><div class="mod-star-btn" onclick="event.stopPropagation();setStars('${id}',${meta.stars ?? 0},this)">★ ${meta.stars ?? 0}</div>` : ''}
+                ${isAdmin ? `<div class="mod-delete-btn" onclick="event.stopPropagation();deleteSubmission('${id}',this.closest('.mod-card'))">✕</div><div class="mod-star-btn" data-stars="${meta.stars ?? 0}" onclick="event.stopPropagation();setStars('${id}',${meta.stars ?? 0},this)">★ ${meta.stars ?? 0}</div>` : ''}
                 <img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
                 <div class="mod-label" style="margin-top:0;padding-top:0.3rem;">
                     <h1 style="font-size: 3vh; margin:0; line-height:1.1; color:#E1E1E1;">${meta.title}</h1>
@@ -222,17 +222,14 @@ reloadModList();
 
 
 async function setStars(id, current, btn) {
-    const input = prompt(`Stars for mod #${id} (0-5):`, current);
-    if (input === null) return;
-    const stars = parseInt(input, 10);
-    if (isNaN(stars) || stars < 0 || stars > 5) { alert('Enter a number 0-5'); return; }
+    const next = (parseInt(btn.dataset.stars ?? current, 10) + 1) % 6;
     const token = localStorage.getItem('token');
     const res = await fetch(`${API}/submissions/${id}/stars`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stars })
+        body: JSON.stringify({ stars: next })
     });
-    if (res.ok) { btn.textContent = `★ ${stars}`; }
+    if (res.ok) { btn.dataset.stars = next; btn.textContent = `★ ${next}`; }
     else { const d = await res.json().catch(() => ({})); alert('Failed: ' + (d.message || 'Unknown error')); }
 }
 
