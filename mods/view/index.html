@@ -29,8 +29,9 @@
 				position: relative;
 				width: 100%;
 				height: 100%;
+				overflow: hidden;
 			}
-			.thumbnail-wrapper img,
+			.thumbnail-wrapper img:not(.video-ctrl),
 			.thumbnail-wrapper video {
 				position: absolute;
 				inset: 0;
@@ -38,6 +39,15 @@
 				height: 100%;
 				object-fit: contain;
 				transition: opacity 0.3s ease;
+			}
+
+			.video-ctrl {
+				position: static;
+				width: 2.5vw;
+				height: 2.5vw;
+				cursor: pointer;
+				user-select: none;
+				object-fit: unset;
 			}
 
 			.thumbnail-box-left {
@@ -69,6 +79,171 @@
 				height: 7vh;
 				width: auto;
 			}
+
+			#sidebar-toggle {
+				display: none;
+			}
+			#sidebar-overlay {
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 150;
+			}
+			#sidebar-overlay.open { display: block; }
+
+			@media (max-width: 768px) {
+				.ui-box {
+					border-image: url('../../global-chat/box-base.png') 18 fill / 6px stretch;
+				}
+
+				#home-btn img {
+					height: 6rem !important;
+				}
+
+				html, body {
+					overflow-x: hidden;
+					max-width: 100vw;
+				}
+
+				body {
+					padding-top: 2vh !important;
+					padding-left: 0 !important;
+					padding-right: 0 !important;
+					padding-bottom: 10vh !important;
+				}
+
+				#sidebar-toggle {
+					display: block;
+					position: fixed;
+					top: 1.5vh;
+					right: 0;
+					height: 6vh;
+					width: auto;
+					z-index: 300;
+					cursor: pointer;
+					user-select: none;
+				}
+
+				#main-layout {
+					flex-direction: column !important;
+					width: 100vw;
+					box-sizing: border-box;
+					padding: 0 3vw;
+					gap: 1.5vh !important;
+				}
+
+				#main-left {
+					width: 100% !important;
+					min-width: 0;
+					box-sizing: border-box;
+					gap: 1.5vh !important;
+				}
+
+				#title-text {
+					font-size: 4.5vh !important;
+				}
+
+				#author-text {
+					font-size: 3vh !important;
+				}
+
+				#thumbnail-box-main {
+					height: 55vw !important;
+				}
+
+				.video-ctrl {
+					width: 8vw !important;
+					height: 8vw !important;
+				}
+
+				#video-controls {
+					gap: 2vw !important;
+					bottom: 8px !important;
+					right: 8px !important;
+				}
+
+				#downloads-box, #like-box {
+					padding: 1.5vh 1.5vw !important;
+					min-width: 0;
+					overflow: hidden;
+				}
+
+				#category-box {
+					padding: 1.5vh 3vw !important;
+					min-width: 0;
+					overflow: hidden;
+				}
+
+				#downloads-box img, #like-box img {
+					width: 3.5vh !important;
+					height: 3.5vh !important;
+				}
+
+				#downloads-box a, #like-box a {
+					font-size: 3.5vh !important;
+				}
+
+				#category-text {
+					font-size: 2.2vh !important;
+					word-break: break-word;
+					text-align: right;
+				}
+
+				#engine-text {
+					font-size: 1.8vh !important;
+					word-break: break-word;
+					text-align: right;
+				}
+
+				#right-panel {
+					position: fixed !important;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					width: 92vw !important;
+					z-index: 200;
+					transform: translateX(110%);
+					transition: transform 0.3s ease;
+					overflow-y: auto;
+					background-color: #1a1a2e;
+					padding: 3vh 4vw !important;
+					box-sizing: border-box;
+					gap: 2vh !important;
+				}
+
+				#right-panel.open {
+					transform: translateX(0);
+				}
+
+				#right-panel .ui-box {
+					width: 100% !important;
+					box-sizing: border-box;
+					font-size: 5vh !important;
+				}
+
+				#right-panel .stat-icon {
+					height: 5vh !important;
+					margin-right: 1.5vw !important;
+				}
+
+				#right-panel .stat-text {
+					margin-right: 4vw !important;
+				}
+
+				#contributors-panel a {
+					font-size: 2.5vh !important;
+				}
+
+				#contributors-panel a:last-child {
+					font-size: 2vh !important;
+				}
+
+				#mod-description {
+					font-size: 2.5vh !important;
+					padding: 0 1vw;
+				}
+			}
 		</style>
 		<script>
 			var modId = sessionStorage.getItem('modId');
@@ -86,10 +261,12 @@
 	</head>
 	<body style="background-color:black">
 		<script src="../../api.js"></script>
-		<div style="display: flex; gap: 1vw;">
-			<div style="display: flex; flex-direction: column; width: 55.5vw; gap: 1vh;">
+		<img id="sidebar-toggle" draggable="false" src="https://files.funkinbackstage.com/side-bar-button-closed.png" onclick="toggleSidebar()">
+		<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+		<div id="main-layout" style="display: flex; gap: 1vw;">
+			<div id="main-left" style="display: flex; flex-direction: column; width: 55.5vw; gap: 1vh;">
 				<div id="title-box" class="ui-box" style="padding: 3vh; padding-left: 2vw; width: 100%;"><a id="title-text" style="font-size: 7vh;"></a> <a id="author-text" style="margin-left: 2vh; margin-top: 1vh;font-size: 5vh; color: #C7C7C7; font-family: 'FunkinOptions', sans-serif;"></a></div>
-				<div class="ui-box" style="padding: 0vh; padding-left: 0; width: 100%; height: 23.7vw">
+				<div id="thumbnail-box-main" class="ui-box" style="padding: 0vh; padding-left: 0; width: 100%; height: 23.7vw">
 					<div class="thumbnail-box thumbnail-box-left" style="width: 12.5%; height: 100%; display:flex; justify-content: center; align-items: center;" onclick="scrollThumbnail(-1)">
 						<img draggable="false" src="https://funkinbackstage.com/mods/view/arrow.png" style="height: 10vw; margin-left: 1vw"/>
 					</div>
@@ -98,8 +275,8 @@
 							<div draggable="false" id="thumbnail-a" style="opacity: 1; position: absolute; inset: 0; transition: opacity 0.3s ease;"></div>
 							<div draggable="false" id="thumbnail-b" style="opacity: 0; position: absolute; inset: 0; transition: opacity 0.3s ease;"></div>
 							<div id="video-controls" style="display:none; position:absolute; bottom:10px; right:10px; z-index:10; gap:6px; flex-direction:row;">
-								<img id="btn-play" onclick="toggleVideoPlay()" draggable="false" src="https://funkinbackstage.com/mods/view/icon-playing.png" style="width:2.5vw; height:2.5vw; cursor:pointer; user-select:none; margin-left: -5.5vw;  margin-top: -2.6vw;">
-								<img id="btn-mute" onclick="toggleVideoMute()" draggable="false" src="https://funkinbackstage.com/mods/view/icon-muted.png" style="width:2.5vw; height:2.5vw; cursor:pointer; user-select:none; margin-left: -2.5vw;  margin-top: -2.6vw;">
+								<img id="btn-play" class="video-ctrl" onclick="toggleVideoPlay()" draggable="false" src="https://funkinbackstage.com/mods/view/icon-playing.png">
+								<img id="btn-mute" class="video-ctrl" onclick="toggleVideoMute()" draggable="false" src="https://funkinbackstage.com/mods/view/icon-muted.png">
 							</div>
 						</div>
 					</div>
@@ -122,7 +299,7 @@
 					</div>
 				</div>
 			</div>
-			<div style="display: flex; flex-direction: column; gap: 1vh; width: 17.5vw;">
+			<div id="right-panel" style="display: flex; flex-direction: column; gap: 1vh; width: 17.5vw;">
 				<div class="ui-box" style="width: 100%; font-size: 3.8vh; display: flex; flex-direction: column; padding: 2.6vh">
 					<div style="display: flex;">
 						<img class="stat-icon" src="https://funkinbackstage.com/mods/assets/icon-download.png"/>
@@ -144,7 +321,6 @@
 
 				</div>
 			</div>
-		</div>
 		<script>
 			var thumbnails = [];
 			var curThumbnail = 0;
@@ -288,6 +464,18 @@
 				}
 			}
 			populateData();
+
+			function toggleSidebar() {
+				const panel = document.getElementById('right-panel');
+				const overlay = document.getElementById('sidebar-overlay');
+				const btn = document.getElementById('sidebar-toggle');
+				const isOpen = panel.classList.contains('open');
+				panel.classList.toggle('open');
+				overlay.classList.toggle('open');
+				btn.src = isOpen
+					? 'https://files.funkinbackstage.com/side-bar-button-closed.png'
+					: 'https://files.funkinbackstage.com/side-bar-button-open.png';
+			}
 
 			function trackDownload(url) {
 				fetch(`${API}/submissions/${modId}/download`, { method: 'POST' });
