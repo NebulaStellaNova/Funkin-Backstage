@@ -331,16 +331,11 @@
         }
         const token = localStorage.getItem('token');
         if (!token) { window.location.href = '../login'; return; }
-        const { id } = await fetch(`${API}/me`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({})
-        }).then(r => r.json());
 
         await fetch(`${API}/chat/send`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user: id, contents })
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ contents })
         });
         document.getElementById('chat-bar').value = "";
         scrollAfterUpdate = true;
