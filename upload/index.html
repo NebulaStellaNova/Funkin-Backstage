@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Funkin' Backstage | Upload</title>
+	<link rel="icon" type="image/png" href="../favicon.png">
+	<link rel="stylesheet" href="../style.css">
+	<link rel="stylesheet" href="../mods/style.css">
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			font-family: 'FunkinLingLong', sans-serif;
+		}
+
+		.upload-container {
+			display: flex;
+			flex-direction: column;
+			width: 75vw;
+		}
+
+		.tab-row {
+			display: flex;
+			flex-direction: row;
+			gap: 8px;
+			padding-left: 12px;
+		}
+
+		.tab-btn, .tab-panel {
+			border-image: url('../global-chat/box-base.png') 18 / 10px stretch !important;
+			background-color: #767A93;
+			border-radius: 8px;
+		}
+
+		.tab-btn {
+			height: auto !important;
+			transition: opacity 0.2s !important;
+			padding: 1.2vh 4vh !important;
+			font-size: 3.5vh;
+			cursor: pointer;
+			opacity: 0.45;
+			user-select: none;
+		}
+
+		.tab-btn.active {
+			opacity: 1;
+		}
+
+		.tab-panel {
+			display: none;
+			height: auto !important;
+			transition: none !important;
+			padding: 5vh !important;
+			min-height: 70vh;
+			flex-direction: column;
+		}
+
+		.tab-panel.active {
+			display: flex;
+			gap: 1.5vh;
+		}
+
+		.field-row {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 1.5rem;
+			width: 100%;
+		}
+
+		.upload-label {
+			font-size: 3.5vh;
+			color: #E1E1E1;
+			margin: 0;
+			font-weight: normal;
+			white-space: nowrap;
+		}
+
+		.input-wrap {
+			flex: 1;
+			border-image: url('../global-chat/box-base.png') 18 fill / 8px stretch;
+			border-radius: 6px;
+			padding: 0.6vh 1.5vh;
+			display: flex;
+			align-items: center;
+			cursor: text;
+		}
+
+		.input-wrap input,
+		.input-wrap textarea {
+			background: transparent;
+			border: none;
+			outline: none;
+			color: #E1E1E1;
+			font-family: 'FunkinLingLong', sans-serif;
+			font-size: 2.5vh;
+			width: 100%;
+			caret-color: #E1E1E1;
+		}
+
+		.input-wrap textarea {
+			resize: none;
+			height: 14vh;
+			align-self: stretch;
+		}
+
+		.upload-dd {
+			border-image: url('../global-chat/box-base.png') 18 fill / 8px stretch !important;
+			border-radius: 6px;
+			min-width: 200px;
+		}
+
+		.upload-dd .mod-box-header h1 {
+			font-size: 2.5vh;
+		}
+
+		.upload-dd .mod-box-content h1 {
+			font-size: 2.5vh;
+		}
+	</style>
+</head>
+<body>
+	<h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 6vh; font-weight: normal; text-align: center; margin: 0; position: absolute; top: 1.5rem; left: 0; right: 0;">UPLOAD A MOD</h1>
+	<div class="upload-container">
+		<div class="tab-row">
+			<div class="mod-box tab-btn active" onclick="switchTab('overview')">Overview</div>
+			<div class="mod-box tab-btn" onclick="switchTab('media')">Media</div>
+			<div class="mod-box tab-btn" onclick="switchTab('ownership')">Ownership</div>
+			<div style="flex: 1;"></div>
+			<div class="mod-box tab-btn active" style="opacity: 1;" onclick="submitMod()">Submit</div>
+		</div>
+		<div id="tab-overview" class="mod-box tab-panel active">
+			<div class="field-row">
+				<h1 class="upload-label">Mod Title:</h1>
+				<div class="input-wrap"><input type="text" id="mod-title" /></div>
+			</div>
+			<h1 class="upload-label">Description:</h1>
+			<div class="input-wrap" onclick="this.querySelector('textarea').focus()"><textarea id="mod-desc"></textarea></div>
+			<div class="field-row">
+				<h1 class="upload-label">Mod Blurb:</h1>
+				<div class="input-wrap"><input type="text" id="mod-blurb" /></div>
+			</div>
+			<div class="field-row" style="width: auto; align-items: flex-start;">
+				<h1 class="upload-label" style="padding-top: 1.5vh;">Engine:</h1>
+				<div class="mod-box upload-dd" id="engine-dd">
+					<div class="mod-box-header">
+						<h1 id="engine-label">ENGINE - BASE GAME</h1>
+						<div style="flex: 1;"></div>
+						<img draggable="false" src="../mods/assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-left: 1rem; margin-right: 1rem; cursor: pointer;" onclick="toggleDD(this, 'engine-dd')">
+					</div>
+					<div class="mod-box-content" style="padding-left: 5%;">
+						<div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
+						<h1 class="sort-item" onclick="selectEngine('base-game', 'Base Game')">Base Game</h1>
+						<h1 class="sort-item" onclick="selectEngine('codename-engine', 'Codename Engine')">Codename Engine</h1>
+						<h1 class="sort-item" onclick="selectEngine('psych-engine', 'Psych Engine')">Psych Engine</h1>
+						<h1 class="sort-item" onclick="selectEngine('kade-engine', 'Kade Engine')">Kade Engine</h1>
+						<h1 class="sort-item" onclick="selectEngine('other', 'Other')">Other</h1>
+					</div>
+				</div>
+				<h1 class="upload-label" style="padding-top: 1.5vh;">Category:</h1>
+				<div class="mod-box upload-dd" id="category-dd">
+					<div class="mod-box-header">
+						<h1 id="category-label">CATEGORY - FULL MODS</h1>
+						<div style="flex: 1;"></div>
+						<img draggable="false" src="../mods/assets/drop down arrow.png" class="smooth-btn dropdown-arrow" style="height: 2vh; margin-left: 1rem; margin-right: 1rem; cursor: pointer;" onclick="toggleDD(this, 'category-dd')">
+					</div>
+					<div class="mod-box-content" style="padding-left: 5%;">
+						<div style="height: 6px; width: 90%; background-color: #E1E1E1; border-radius: 10px; margin-bottom: 1vh;"></div>
+						<h1 class="sort-item" onclick="selectCategory('full-mods', 'Full Mods')">Full Mods</h1>
+						<h1 class="sort-item" onclick="selectCategory('ports', 'Ports')">Ports</h1>
+						<h1 class="sort-item" onclick="selectCategory('scripts', 'Scripts')">Scripts</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="tab-media" class="mod-box tab-panel">
+			<div class="field-row">
+				<h1 class="upload-label">Screenshots:</h1>
+				<div class="mod-box tab-btn active" style="opacity:1; padding: 0.6vh 2vh !important; font-size: 2.5vh; cursor:pointer;" onclick="document.getElementById('screenshots-input').click()">UPLOAD</div>
+				<input type="file" id="screenshots-input" accept="image/*,.mp4,video/mp4" multiple style="display:none;">
+				<h1 style="font-size: 2vh; color: #C7C7C7; margin: 0; font-weight: normal;">* 1 Required (Up To 5)</h1>
+			</div>
+			<div class="field-row">
+				<h1 class="upload-label">Front Page Portrait:</h1>
+				<div class="mod-box tab-btn active" style="opacity:1; padding: 0.6vh 2vh !important; font-size: 2.5vh; cursor:pointer;" onclick="document.getElementById('portrait-input').click()">UPLOAD</div>
+				<input type="file" id="portrait-input" accept="image/*" style="display:none;">
+				<h1 style="font-size: 2vh; color: #C7C7C7; margin: 0; font-weight: normal;">* Optional</h1>
+			</div>
+			<div class="field-row">
+				<h1 class="upload-label">Download:</h1>
+				<div class="mod-box tab-btn active" style="opacity:1; padding: 0.6vh 2vh !important; font-size: 2.5vh; cursor:pointer;" onclick="document.getElementById('download-input').click()">UPLOAD</div>
+				<input type="file" id="download-input" style="display:none;">
+				<h1 style="font-size: 2vh; color: #C7C7C7; margin: 0; font-weight: normal;">* Required</h1>
+			</div>
+		</div>
+		<div id="tab-ownership" class="mod-box tab-panel"></div>
+	</div>
+	<p class="footer-left" style="position: fixed; bottom: 1rem; left: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666;"></p>
+	<p class="footer-right" style="position: fixed; bottom: 1rem; right: 1rem; font-family: 'Inconsolata ExtraBold', sans-serif; font-size: 1.25rem; color: #666; text-align: right;"></p>
+	<script src="../api.js"></script>
+	<script>
+		const TABS = ['overview', 'media', 'ownership'];
+		let engineValue = 'base-game';
+		let categoryValue = 'full-mods';
+
+		function switchTab(name) {
+			document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+				btn.classList.toggle('active', TABS[i] === name);
+			});
+			document.querySelectorAll('.tab-panel').forEach(panel => {
+				panel.classList.toggle('active', panel.id === 'tab-' + name);
+			});
+		}
+
+		function toggleDD(btn, boxId) {
+			const box = document.getElementById(boxId);
+			const isExpanding = !box.classList.contains('expanded');
+			document.querySelectorAll('.upload-dd.expanded').forEach(b => {
+				b.classList.remove('expanded');
+				b.style.height = '';
+				b.querySelector('.dropdown-arrow').classList.remove('flipped');
+			});
+			if (isExpanding) {
+				box.style.height = box.scrollHeight + 'px';
+				box.classList.add('expanded');
+				btn.classList.add('flipped');
+			}
+		}
+
+		function selectEngine(value, display) {
+			engineValue = value;
+			document.getElementById('engine-label').textContent = 'ENGINE - ' + display.toUpperCase();
+			const box = document.getElementById('engine-dd');
+			box.classList.remove('expanded');
+			box.style.height = '';
+			box.querySelector('.dropdown-arrow').classList.remove('flipped');
+		}
+
+		function selectCategory(value, display) {
+			categoryValue = value;
+			document.getElementById('category-label').textContent = 'CATEGORY - ' + display.toUpperCase();
+			const box = document.getElementById('category-dd');
+			box.classList.remove('expanded');
+			box.style.height = '';
+			box.querySelector('.dropdown-arrow').classList.remove('flipped');
+		}
+
+		async function presignAndUpload(file, purpose, submissionId, index) {
+			const token = localStorage.getItem('token');
+			const body = { filename: file.name, contentType: file.type || 'application/octet-stream', purpose, submissionId };
+			if (purpose === 'screenshot') body.index = index;
+
+			const presignRes = await fetch(`${API}/upload/presign`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+				body: JSON.stringify(body)
+			});
+			if (!presignRes.ok) {
+				const err = await presignRes.json().catch(() => ({}));
+				throw new Error(err.message || 'Failed to get upload URL');
+			}
+			const { url, publicUrl } = await presignRes.json();
+
+			const uploadRes = await fetch(url, {
+				method: 'PUT',
+				headers: { 'Content-Type': file.type || 'application/octet-stream' },
+				body: file
+			});
+			if (!uploadRes.ok) throw new Error('Upload to storage failed');
+			return publicUrl;
+		}
+
+		async function submitMod() {
+			const token = localStorage.getItem('token');
+			if (!token) { alert('You must be logged in to upload a mod.'); return; }
+
+			const title = document.getElementById('mod-title').value.trim();
+			const description = document.getElementById('mod-desc').value.trim();
+			const blurb = document.getElementById('mod-blurb').value.trim();
+			const screenshotFiles = document.getElementById('screenshots-input').files;
+			const portraitFile = document.getElementById('portrait-input').files[0] || null;
+			const downloadFile = document.getElementById('download-input').files[0] || null;
+
+			if (!title) { alert('Mod title is required.'); return; }
+			if (screenshotFiles.length === 0) { alert('At least one screenshot is required.'); return; }
+			if (!downloadFile) { alert('A download file is required.'); return; }
+
+			const submitBtn = document.querySelector('[onclick="submitMod()"]');
+			const originalText = submitBtn.querySelector('h1') ? submitBtn.querySelector('h1').textContent : 'Submit';
+			if (submitBtn.querySelector('h1')) submitBtn.querySelector('h1').textContent = 'Uploading...';
+			submitBtn.style.pointerEvents = 'none';
+
+			const submissionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+			try {
+				const screenshotUrls = [];
+				for (let i = 0; i < Math.min(screenshotFiles.length, 5); i++) {
+					if (submitBtn.querySelector('h1')) submitBtn.querySelector('h1').textContent = `Screenshot ${i + 1}/${Math.min(screenshotFiles.length, 5)}...`;
+					screenshotUrls.push(await presignAndUpload(screenshotFiles[i], 'screenshot', submissionId, i));
+				}
+
+				let portraitUrl = null;
+				if (portraitFile) {
+					if (submitBtn.querySelector('h1')) submitBtn.querySelector('h1').textContent = 'Portrait...';
+					portraitUrl = await presignAndUpload(portraitFile, 'portrait', submissionId);
+				}
+
+				if (submitBtn.querySelector('h1')) submitBtn.querySelector('h1').textContent = 'Download...';
+				const downloadUrl = await presignAndUpload(downloadFile, 'download', submissionId);
+
+				if (submitBtn.querySelector('h1')) submitBtn.querySelector('h1').textContent = 'Saving...';
+				const res = await fetch(`${API}/submissions/create`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+					body: JSON.stringify({ id: submissionId, title, description, blurb, engine: engineValue, category: categoryValue, screenshots: screenshotUrls, portrait: portraitUrl, download: downloadUrl })
+				});
+
+				if (!res.ok) {
+					const data = await res.json().catch(() => ({}));
+					throw new Error(data.message || 'Submission failed');
+				}
+
+				window.location.href = '../mods';
+			} catch (e) {
+				alert('Upload failed: ' + e.message);
+				if (submitBtn.querySelector('h1')) submitBtn.querySelector('h1').textContent = originalText;
+				submitBtn.style.pointerEvents = '';
+			}
+		}
+	</script>
+</body>
+</html>
