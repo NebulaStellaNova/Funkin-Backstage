@@ -200,7 +200,7 @@
 				for (const dlData of meta.dls) {
 					console.log(dlData);
 					document.getElementById("downloads-box").innerHTML += `<div style="display: flex; gap: 0.5vw; align-items: center;">
-									<img class="download-button" style="width: 5vh; height: 5vh" src="https://funkinbackstage.com/mods/view/icon-download.png" onclick="window.open('${dlData.url}', '_blank')"/>
+									<img class="download-button" style="width: 5vh; height: 5vh" src="https://funkinbackstage.com/mods/view/icon-download.png" onclick="trackDownload('${dlData.url}')"/>
 									<a style="font-size: 6vh">v${dlData.version}</a>
 								</div>`;
 				}
@@ -268,6 +268,11 @@
 				document.getElementById('view-text').textContent = meta.views.toLocaleString('en-US');
 			}
 			populateData();
+
+			function trackDownload(url) {
+				fetch(`${API}/submissions/${modId}/download`, { method: 'POST' });
+				window.open(url, '_blank');
+			}
 
 			async function toggleLike() {
 				const token = localStorage.getItem('token');
