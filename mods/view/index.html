@@ -339,7 +339,7 @@
 			function setSlot(slotId, url) {
 				const slot = document.getElementById(slotId);
 				if (isVideo(url)) {
-					slot.innerHTML = `<video src="${url}" loop muted playsinline style="width:100%;height:100%;object-fit:contain;"></video>`;
+					slot.innerHTML = `<video src="${url}" loop muted playsinline autoplay style="width:100%;height:100%;object-fit:contain;"></video>`;
 					const vid = slot.querySelector('video');
 					vid.volume = 0.5;
 					vid.play().catch(() => { });
