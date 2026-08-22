@@ -130,6 +130,15 @@
 			border-image: url('../global-chat/box-base.png') 18 fill / 10px stretch !important;
 			background-color: transparent !important;
 		}
+
+		#tab-ownership {
+			height: 70vh !important;
+			min-height: unset !important;
+		}
+
+		#ownership-rows .ownership-row:first-child .remove-owner-btn {
+			visibility: hidden;
+		}
 	</style>
 </head>
 <body>
@@ -212,16 +221,17 @@
 				<h1 id="download-label" style="font-size: 2vh; color: #C7C7C7; margin: 0; font-weight: normal;">* Required</h1>
 			</div>
 		</div>
-		<div id="tab-ownership" class="mod-box tab-panel">
-			<div id="ownership-rows">
+		<div id="tab-ownership" class="mod-box tab-panel" style="justify-content: space-between;">
+			<div id="ownership-rows" style="overflow-y: auto; display: flex; flex-direction: column; gap: 1.5vh; flex: 1; min-height: 0;">
 				<div class="field-row ownership-row">
 					<h1 class="upload-label">Username:</h1>
 					<div class="input-wrap" style="flex:1;"><input type="text" class="owner-username" /></div>
 					<h1 class="upload-label">Role:</h1>
 					<div class="input-wrap" style="flex:1;"><input type="text" class="owner-role" /></div>
+					<div class="mod-box tab-btn png-fill remove-owner-btn" style="width:5vh !important; height:5vh !important; padding:0 !important; font-size:1.8vh; cursor:pointer; line-height:1; flex-shrink:0; display:flex; align-items:center; justify-content:center;" onclick="removeOwnerRow(this)">✕</div>
 				</div>
 			</div>
-			<div style="display:flex; justify-content:center; margin-top:1vh;">
+			<div style="display:flex; justify-content:center; padding-top:1.5vh; flex-shrink:0;">
 				<div class="mod-box tab-btn png-fill" style="padding:0.4vh 1.8vh !important; font-size:3vh; cursor:pointer; line-height:1;" onclick="addOwnerRow()">+</div>
 			</div>
 		</div>
@@ -301,17 +311,25 @@
 			return publicUrl;
 		}
 
+		function removeOwnerRow(btn) {
+			const rows = document.querySelectorAll('.ownership-row');
+			if (rows.length <= 1) return;
+			btn.closest('.ownership-row').remove();
+		}
+
 		function addOwnerRow() {
 			const row = document.createElement('div');
 			row.className = 'field-row ownership-row';
-			row.style.marginTop = '1vh';
 			row.innerHTML = `
 				<h1 class="upload-label">Username:</h1>
 				<div class="input-wrap" style="flex:1;"><input type="text" class="owner-username" /></div>
 				<h1 class="upload-label">Role:</h1>
 				<div class="input-wrap" style="flex:1;"><input type="text" class="owner-role" /></div>
+				<div class="mod-box tab-btn png-fill remove-owner-btn" style="width:5vh !important; height:5vh !important; padding:0 !important; font-size:1.8vh; cursor:pointer; line-height:1; flex-shrink:0; display:flex; align-items:center; justify-content:center;" onclick="removeOwnerRow(this)">✕</div>
 			`;
-			document.getElementById('ownership-rows').appendChild(row);
+			const container = document.getElementById('ownership-rows');
+			container.appendChild(row);
+			container.scrollTop = container.scrollHeight;
 		}
 
 		function updateFileLabel(labelId, input, isMultiple) {
