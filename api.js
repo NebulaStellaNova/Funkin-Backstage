@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     img.alt = 'Home';
     img.draggable = false;
     img.style.cssText = 'height:10rem;display:block;';
+    if (window.innerWidth <= 768) img.style.height = '5rem';
     btn.appendChild(img);
     btn.style.transformOrigin = 'right center';
     btn.addEventListener('mouseenter', () => { btn.style.opacity = '1'; btn.style.transform = 'translateY(-50%) scale(1.08)'; });
