@@ -222,14 +222,17 @@ reloadModList();
 
 
 async function setStars(id, current, btn) {
-    const next = (parseInt(btn.dataset.stars ?? current, 10) + 1) % 6;
+    const input = prompt(`Stars for mod #${id} (0-5):`, btn.dataset.stars ?? current);
+    if (input === null) return;
+    const stars = parseInt(input, 10);
+    if (isNaN(stars) || stars < 0 || stars > 5) { alert('Enter a number 0-5'); return; }
     const token = localStorage.getItem('token');
     const res = await fetch(`${API}/submissions/${id}/stars`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stars: next })
+        body: JSON.stringify({ stars })
     });
-    if (res.ok) { btn.dataset.stars = next; btn.textContent = `★ ${next}`; }
+    if (res.ok) { btn.dataset.stars = stars; btn.textContent = `★ ${stars}`; }
     else { const d = await res.json().catch(() => ({})); alert('Failed: ' + (d.message || 'Unknown error')); }
 }
 
