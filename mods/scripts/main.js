@@ -168,12 +168,12 @@ async function reloadModList() {
         const heartIcon = isLiked ? 'assets/icon-heart-filled.png' : 'assets/icon-heart.png';
         htmlOut += `
             <div class="mod-card" onclick="sessionStorage.setItem('modId','${id}');window.location.href='/mods/view/'" style="cursor: pointer;">
-                <img draggable="false" src="${firstImageThumb(meta.thumbnails)}" class="mod-thumbnail">
+                <img draggable="false" src="${firstImageThumb(meta.thumbnails)}" class="mod-thumbnail" style="display:block;">
                 <img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
                 <img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
-                <div class="mod-label">
-                    <h1 style="font-size: 3vh;">${meta.title}</h1>
-                    <h1 style="font-size: 2vh; color: #C7C7C7;">${meta.blurb}</h1>
+                <div class="mod-label" style="margin-top:0;padding-top:0.3rem;">
+                    <h1 style="font-size: 3vh; margin:0; line-height:1.1;">${meta.title}</h1>
+                    <h1 style="font-size: 2vh; color: #C7C7C7; margin:0; line-height:1.1;">${meta.blurb}</h1>
                 </div>
                 <div class="mod-footer">
                     <div class="mod-footer-left">
