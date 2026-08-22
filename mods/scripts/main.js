@@ -7,6 +7,7 @@ var featuredFilter = false;
 var likedFilter = false;
 var filterCount = 0;
 var sortBackwards = false;
+var isAdmin = false;
 
 function toggleLikedFilter() {
     likedFilter = !likedFilter;
@@ -90,7 +91,11 @@ async function reloadModList() {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({})
         });
-        if (meRes.ok) likedSubmissions = (await meRes.json()).likedSubmissions ?? [];
+        if (meRes.ok) {
+            const me = await meRes.json();
+            likedSubmissions = me.likedSubmissions ?? [];
+            isAdmin = me.isAdmin ?? false;
+        }
     }
 
     const files = await fetch(`${API}/submissions`).then(r => r.json()).catch(() => []);
@@ -170,6 +175,7 @@ async function reloadModList() {
             <div class="mod-card" onclick="sessionStorage.setItem('modId','${id}');window.location.href='/mods/view/'" style="cursor: pointer;">
                 <img draggable="false" src="${firstImageThumb(meta.thumbnails)}" class="mod-thumbnail" style="display:block;">
                 <img draggable="false" src="${API}/avatars/${meta.submitter}.png" class="mod-topleft">
+                ${isAdmin ? `<div class="mod-delete-btn" onclick="event.stopPropagation();deleteSubmission('${id}',this.closest('.mod-card'))">✕</div>` : ''}
                 <img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
                 <div class="mod-label" style="margin-top:0;padding-top:0.3rem;">
                     <h1 style="font-size: 3vh; margin:0; line-height:1.1;">${meta.title}</h1>
@@ -214,6 +220,21 @@ async function reloadModList() {
 }
 reloadModList();
 
+
+async function deleteSubmission(id, cardEl) {
+    if (!confirm(`Delete mod #${id}? This cannot be undone.`)) return;
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API}/submissions/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+        cardEl.remove();
+    } else {
+        const data = await res.json().catch(() => ({}));
+        alert('Delete failed: ' + (data.message || 'Unknown error'));
+    }
+}
 
 function toggleTick(img) {
     img.classList.toggle('selected');
