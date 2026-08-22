@@ -11,7 +11,13 @@
             .login-link { color: #C7C7C7; text-decoration: none; }
             .login-link:hover { color: #E1E1E1; text-decoration: underline; }
             @media (max-width: 768px) {
-                body { padding: 2rem 1rem; justify-content: center; }
+                body {
+                    height: auto !important;
+                    min-height: 100vh !important;
+                    justify-content: center !important;
+                    padding: 2rem 1.5rem !important;
+                    box-sizing: border-box;
+                }
                 body h1 { text-align: center; }
                 #username-box, #password-box { width: 85vw !important; }
                 #login { width: auto !important; padding: 0 2.5rem !important; }
@@ -20,7 +26,7 @@
         </style>
 	</head>
 
-	<body style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; height: 100vh; margin: 0;">
+	<body style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 1rem; min-height: 100vh; overflow-y: auto; margin: 0; padding: 3rem 1.5rem; box-sizing: border-box;">
         <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 5vh;">Welcome back to Funkin' Backstage!</h1>
         <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 3vh; margin-top: -1rem; color: #C7C7C7;">Login to your account here</h1>
         <div class="mod-box" id="username-box" style="flex-direction: row; align-items: center; height: 7vh; width: 30vw; padding: 0 1.5rem 0 3rem; gap: 0.75rem;">

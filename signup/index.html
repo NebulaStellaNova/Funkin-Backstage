@@ -11,7 +11,13 @@
             .login-link { color: #C7C7C7; text-decoration: none; }
             .login-link:hover { color: #E1E1E1; text-decoration: underline; }
             @media (max-width: 768px) {
-                body { padding: 2rem 1rem; justify-content: center; }
+                body {
+                    height: auto !important;
+                    min-height: 100vh !important;
+                    justify-content: center !important;
+                    padding: 2rem 1.5rem !important;
+                    box-sizing: border-box;
+                }
                 body h1 { text-align: center; }
                 #username-box, #password-box { width: 85vw !important; }
                 #sign-up { width: auto !important; padding: 0 2.5rem !important; }
@@ -20,7 +26,7 @@
         </style>
 	</head>
 
-	<body style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; height: 100vh; margin: 0;">
+	<body style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; min-height: 100vh; overflow-y: auto; margin: 0; box-sizing: border-box;">
         <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 5vh;">Welcome to Funkin' Backstage!</h1>
         <h1 style="font-family: 'FunkinLingLong', sans-serif; font-size: 3vh; margin-top: -1rem; color: #C7C7C7;">Create an account here</h1>
         <a href="../login" class="login-link" style="font-family: 'FunkinLingLong', sans-serif; font-size: 2vh; margin-top: -1rem;">Already have one?</a>
