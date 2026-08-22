@@ -150,24 +150,37 @@
 
 <script src="../api.js"></script>
 <script>
-    const avatarCache = new Map();
-    async function getAvatarSrc(userId) {
-        if (!avatarCache.has(userId)) {
-            try {
-                const res = await fetch(`${API}/avatars/${userId}.png`, { method: 'HEAD' });
+    // ── Caches ──────────────────────────────────────────────────────────────
+    const avatarCache = new Map(); // userId → boolean (has custom avatar)
+    const userCache   = new Map(); // userId → { id, username, ... }
+
+    async function getUser(userId) {
+        if (!userCache.has(userId)) {
+            const u = await fetch(`${API}/users/${userId}`).then(r => r.json()).catch(() => ({ id: userId, username: '?' }));
+            userCache.set(userId, u);
+            // Prime avatar cache while we're here
+            if (!avatarCache.has(userId)) {
+                const res = await fetch(`${API}/avatars/${userId}.png`, { method: 'HEAD' }).catch(() => ({ ok: false }));
                 avatarCache.set(userId, res.ok);
-            } catch {
-                avatarCache.set(userId, false);
             }
         }
+        return userCache.get(userId);
+    }
+
+    function getAvatarSrc(userId) {
         return avatarCache.get(userId) ? `${API}/avatars/${userId}.png` : '../icon-profile-out.png';
     }
 
+    let stickerListCache = null;
     async function getStickers() {
-        const files = await fetch(`${API}/stickers`).then(r => r.json());
-        return files.map(f => `${f}`.replace('.png', ''));
+        if (!stickerListCache) {
+            const files = await fetch(`${API}/stickers`).then(r => r.json());
+            stickerListCache = files.map(f => `${f}`.replace('.png', ''));
+        }
+        return stickerListCache;
     }
 
+    // ── Scroll bar ──────────────────────────────────────────────────────────
     const scrollEl = document.getElementById('chat-scroll');
     const track = document.getElementById('scroll-track');
     const thumb = document.getElementById('scroll-thumb');
@@ -205,59 +218,81 @@
         scrollEl.scrollTop = ratio * scrollEl.scrollHeight;
     });
 
+    // ── Rendering helpers ───────────────────────────────────────────────────
+    function escapeHTML(text) {
+        return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    function normalize(str) {
+        return str.toLowerCase()
+            .replace(/0/g,'o').replace(/1/g,'i').replace(/3/g,'e')
+            .replace(/4/g,'a').replace(/5/g,'s').replace(/8/g,'b')
+            .replace(/@/g,'a').replace(/\$/g,'s').replace(/[^a-z]/g,'');
+    }
+
+    async function buildMessageHTML(message) {
+        const stickerList = await getStickers();
+        const user = await getUser(message.poster);
+        const hasAvatar = avatarCache.get(user.id);
+        const avatarSrc = getAvatarSrc(user.id);
+        let content = escapeHTML(`${message.contents}`.trim());
+        const stickerOnly = content.startsWith(':') && content.endsWith(':');
+        for (const sticker of stickerList) {
+            content = content.replace(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height:${stickerOnly ? '13' : '5'}vh;${stickerOnly ? '' : 'margin:1vh;margin-top:-1vh;'}"/>`);
+        }
+        return `<div style="display:flex;flex-direction:column;align-items:flex-start;gap:0rem;justify-content:start;">
+            <div style="display:flex;justify-content:flex-start;align-items:center;gap:0.5vw">
+                <div style="position:relative;height:4vh;width:4vh;flex-shrink:0;">
+                    <img src="${avatarSrc}" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);height:${hasAvatar ? '3.5' : '4'}vh;width:${hasAvatar ? '3.5' : '4'}vh;border-radius:50%;object-fit:cover;"/>
+                    ${hasAvatar ? `<img src="../icon-profile-in.png" style="position:absolute;top:0;left:0;height:4vh;width:4vh;"/>` : ''}
+                </div>
+                <h1 style="font-family:'FunkinOptions',sans-serif;font-size:3vh;margin-top:1.5vh;color:#BABABA">${escapeHTML(user.username)}</h1>
+            </div>
+            <h1 style="font-family:'FunkinOptions',sans-serif;font-size:4vh;margin:0;display:flex;align-items:center">${content}</h1>
+        </div>`;
+    }
+
+    function scrollToBottom(box, andWaitForImages = false) {
+        if (!andWaitForImages) { box.scrollTop = box.scrollHeight; updateThumb(); return; }
+        const imgs = Array.from(box.querySelectorAll('img'));
+        const pending = imgs.filter(img => !img.complete);
+        if (!pending.length) { box.scrollTop = box.scrollHeight; updateThumb(); return; }
+        let done = 0;
+        const settle = () => { if (++done >= pending.length) { box.scrollTop = box.scrollHeight; updateThumb(); } };
+        pending.forEach(img => { img.addEventListener('load', settle); img.addEventListener('error', settle); });
+    }
+
+    // ── Full reload (on page load / 30s sync) ──────────────────────────────
     let updating = false;
-    let scrollAfterUpdate = false;
-    async function updateTheMessages() {
+    async function updateTheMessages(doScroll = false) {
         if (updating) return;
         updating = true;
-        const doScroll = scrollAfterUpdate;
-        scrollAfterUpdate = false;
         try {
-            const stickerList = await getStickers();
-            let out = "";
             const all = await fetch(`${API}/chat/read`).then(r => r.json());
             const messages = all.slice(-25);
-            for (const message of messages) {
-                const user = await fetch(`${API}/users/${message.poster}`).then(r => r.json());
-                const avatarSrc = await getAvatarSrc(user.id);
-                let content = escapeHTML(`${message.contents}`.trim());
-                const stickerOnly = content.startsWith(':') && content.endsWith(':');
-                for (const sticker of stickerList) {
-                    content = content.replace(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height: ${stickerOnly ? '13' : '5' }vh; ${stickerOnly ? '' : 'margin: 1vh; margin-top: -1vh;'}"/>`);
-                }
-                out += `
-                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0rem; justify-content: start;">
-                    <div style="display: flex; justify-content: flex-start; align-items: center; gap: 0.5vw">
-                        <div style="position: relative; height: 4vh; width: 4vh; flex-shrink: 0;">
-                            <img src="${avatarSrc}" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: ${avatarCache.get(user.id) ? '3.5' : '4'}vh; width: ${avatarCache.get(user.id) ? '3.5' : '4'}vh; border-radius: 50%; object-fit: cover;"/>
-                            ${avatarCache.get(user.id) ? `<img src="../icon-profile-in.png" style="position: absolute; top: 0; left: 0; height: 4vh; width: 4vh;"/>` : ''}
-                        </div>
-                        <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 3vh; margin-top: 1.5vh; color: #BABABA">${user.username}</h1>
-                    </div>
-                    <h1 style="font-family: 'FunkinOptions', sans-serif; font-size: 4vh; margin: 0; display: flex; align-items: center">${content}</h1>
-                </div>
-                `
-            }
+            let out = '';
+            for (const msg of messages) out += await buildMessageHTML(msg);
             const box = document.getElementById('chat-scroll');
             box.innerHTML = out;
-            if (doScroll) {
-                const imgs = Array.from(box.querySelectorAll('img'));
-                const pending = imgs.filter(img => !img.complete);
-                if (pending.length === 0) {
-                    box.scrollTop = box.scrollHeight;
-                    updateThumb();
-                } else {
-                    let done = 0;
-                    const onSettle = () => { if (++done >= pending.length) { box.scrollTop = box.scrollHeight; updateThumb(); } };
-                    pending.forEach(img => { img.addEventListener('load', onSettle); img.addEventListener('error', onSettle); });
-                }
-            } else {
-                updateThumb();
-            }
-        } finally {
-            updating = false;
-        }
+            if (doScroll) scrollToBottom(box, true); else updateThumb();
+        } finally { updating = false; }
     }
+
+    // ── Append a single new message (called by WebSocket push) ────────────
+    async function appendMessage(message) {
+        const box = document.getElementById('chat-scroll');
+        const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+        const html = await buildMessageHTML(message);
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        const node = div.firstElementChild;
+        box.appendChild(node);
+        // Keep at most 25 children visible
+        while (box.children.length > 25) box.removeChild(box.firstElementChild);
+        if (atBottom) scrollToBottom(box, true); else updateThumb();
+    }
+
+    // ── Active user ping ────────────────────────────────────────────────────
     if (!sessionStorage.getItem('chatSessionId'))
         sessionStorage.setItem('chatSessionId', Math.random().toString(36).slice(2));
     const chatSessionId = sessionStorage.getItem('chatSessionId');
@@ -270,15 +305,35 @@
 
     const countStream = new EventSource(`${API}/chat/count-stream`);
     countStream.onmessage = e => {
-        document.getElementById('active-count').innerHTML = `<a style="color: #00FF00;">•</a> ${e.data} active`;
+        document.getElementById('active-count').innerHTML = `<a style="color:#00FF00;">•</a> ${e.data} active`;
     };
 
-    updateTheMessages();
-    const messageStream = new EventSource(`${API}/chat/message-stream`);
-    messageStream.onmessage = () => updateTheMessages();
-    // fallback re-sync every 30s in case SSE misses anything
-    setInterval(updateTheMessages, 30000);
+    // ── WebSocket ───────────────────────────────────────────────────────────
+    let ws = null;
+    let wsReady = false;
 
+    function connectWS() {
+        const token = localStorage.getItem('token');
+        const wsBase = API.replace(/^https?/, m => m === 'https' ? 'wss' : 'ws');
+        const url = token ? `${wsBase}/chat/ws?token=${encodeURIComponent(token)}` : `${wsBase}/chat/ws`;
+        ws = new WebSocket(url);
+
+        ws.addEventListener('open', () => { wsReady = true; });
+        ws.addEventListener('close', () => {
+            wsReady = false;
+            // Reconnect after 3 seconds
+            setTimeout(connectWS, 3000);
+        });
+        ws.addEventListener('error', () => ws.close());
+        ws.addEventListener('message', e => {
+            try {
+                const msg = JSON.parse(e.data);
+                if (msg.type === 'message') appendMessage(msg.data);
+            } catch {}
+        });
+    }
+
+    // ── Sticker / input helpers ────────────────────────────────────────────
     function addSticker(id) {
         document.getElementById('chat-bar').value += `:${id}: `;
         toggleStickerBubble();
@@ -290,57 +345,43 @@
         bubble.style.display = bubble.style.display === 'none' ? 'flex' : 'none';
     }
 
-    function escapeHTML(text) {
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-    }
-
-    function normalize(str) {
-        return str.toLowerCase()
-            .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e')
-            .replace(/4/g, 'a').replace(/5/g, 's').replace(/8/g, 'b')
-            .replace(/@/g, 'a').replace(/\$/g, 's').replace(/[^a-z]/g, '');
-    }
-
     async function isBlacklisted(text) {
         const raw = await fetch(`${API}/word-blacklist`).then(r => r.text());
         const words = raw.split('\n').map(w => normalize(w.trim())).filter(Boolean);
-        const normText = normalize(text);
-        // Check to see if it's an embed, so fucking weirdos can't send wild shit, because
-        // we don't want that now, do we?
         const htmlRegex = /<\/?[a-z][\s\S]*>/i;
-        if (htmlRegex.test(text)) {
-            document.getElementById('chat-bar').value = "";
-            return true;
-        }
-        return words.some(w => normText.includes(w));
+        if (htmlRegex.test(text)) return true;
+        return words.some(w => normalize(text).includes(w));
     }
 
+    // ── Send ────────────────────────────────────────────────────────────────
     async function sendMessage() {
         const contents = document.getElementById('chat-bar').value.trim();
         if (!contents) return;
-        if (await isBlacklisted(contents)) {
-            document.getElementById('chat-bar').value = "";
-            return;
-        }
+        if (await isBlacklisted(contents)) { document.getElementById('chat-bar').value = ''; return; }
         const token = localStorage.getItem('token');
         if (!token) { window.location.href = '../login'; return; }
 
-        await fetch(`${API}/chat/send`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ contents })
-        });
-        document.getElementById('chat-bar').value = "";
-        scrollAfterUpdate = true;
-        await updateTheMessages();
+        document.getElementById('chat-bar').value = '';
+
+        if (wsReady && ws && ws.readyState === WebSocket.OPEN) {
+            // Fast path: send over WebSocket — server will broadcast back to everyone
+            ws.send(JSON.stringify({ type: 'send', contents }));
+        } else {
+            // Fallback: HTTP POST
+            await fetch(`${API}/chat/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ contents })
+            });
+            await updateTheMessages(true);
+        }
     }
+
+    // ── Boot ────────────────────────────────────────────────────────────────
+    updateTheMessages(true);
+    connectWS();
+    // 30s re-sync as a safety net in case a WS message is ever dropped
+    setInterval(() => updateTheMessages(false), 30000);
 </script>
 
 </html>
