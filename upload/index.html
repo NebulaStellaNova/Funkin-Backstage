@@ -200,6 +200,12 @@
 				<h1 id="portrait-label" style="font-size: 2vh; color: #C7C7C7; margin: 0; font-weight: normal;">* Optional</h1>
 			</div>
 			<div class="field-row">
+				<h1 class="upload-label">Icon:</h1>
+				<div class="mod-box tab-btn png-fill active" style="opacity:1; padding: 0.6vh 2vh !important; font-size: 2.5vh; cursor:pointer;" onclick="document.getElementById('icon-input').click()">UPLOAD</div>
+				<input type="file" id="icon-input" accept="image/png" style="display:none;" onchange="updateFileLabel('icon-label', this, false)">
+				<h1 id="icon-label" style="font-size: 2vh; color: #C7C7C7; margin: 0; font-weight: normal;">* Optional</h1>
+			</div>
+			<div class="field-row">
 				<h1 class="upload-label">Download:</h1>
 				<div class="mod-box tab-btn png-fill active" style="opacity:1; padding: 0.6vh 2vh !important; font-size: 2.5vh; cursor:pointer;" onclick="document.getElementById('download-input').click()">UPLOAD</div>
 				<input type="file" id="download-input" style="display:none;" onchange="updateFileLabel('download-label', this, false)">
@@ -304,6 +310,7 @@
 			const blurb = document.getElementById('mod-blurb').value.trim();
 			const screenshotFiles = document.getElementById('screenshots-input').files;
 			const portraitFile = document.getElementById('portrait-input').files[0] || null;
+			const iconFile = document.getElementById('icon-input').files[0] || null;
 			const downloadFile = document.getElementById('download-input').files[0] || null;
 
 			if (!title) { alert('Mod title is required.'); return; }
@@ -318,6 +325,7 @@
 
 			let screenshotUrls = [];
 			let portraitUrl = null;
+			let iconUrl = null;
 			let downloadUrl = null;
 
 			try {
@@ -335,12 +343,16 @@
 					portraitUrl = await presignAndUpload(portraitFile, 'portrait', submissionId);
 				}
 
+				if (iconFile) {
+					iconUrl = await presignAndUpload(iconFile, 'icon', submissionId);
+				}
+
 				downloadUrl = await presignAndUpload(downloadFile, 'download', submissionId);
 
 				const res = await fetch(`${API}/submissions/create`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-					body: JSON.stringify({ id: submissionId, title, description, blurb, engine: engineValue, category: categoryValue, screenshots: screenshotUrls, portrait: portraitUrl, download: downloadUrl })
+					body: JSON.stringify({ id: submissionId, title, description, blurb, engine: engineValue, category: categoryValue, screenshots: screenshotUrls, portrait: portraitUrl, icon: iconUrl, download: downloadUrl })
 				});
 
 				if (!res.ok) {

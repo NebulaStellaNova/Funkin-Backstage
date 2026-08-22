@@ -116,6 +116,7 @@ img {
 .mod-card {
   position: relative;
   aspect-ratio: 1241 / 1065;
+  touch-action: manipulation;
 }
 
 .mod-footer {

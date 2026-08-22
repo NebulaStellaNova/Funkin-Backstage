@@ -181,7 +181,7 @@ async function reloadModList() {
                             <img draggable="false" src="assets/icon-download.png" style="height: 1.8vh;">
                             <h1 style="font-size: 2vh;">${fmtNum(meta.downloads ?? 0)}</h1>
                         </div>
-                        <div class="footer-piece" style="cursor: ${token ? 'pointer' : 'default'};" onclick="toggleLike('${id}', this)">
+                        <div class="footer-piece" style="cursor: ${token ? 'pointer' : 'default'};" onclick="event.stopPropagation();toggleLike('${id}', this)">
                             <img draggable="false" src="${heartIcon}" style="height: 1.8vh;">
                             <h1 style="font-size: 2vh;">${fmtNum(meta.likes ?? 0)}</h1>
                         </div>
