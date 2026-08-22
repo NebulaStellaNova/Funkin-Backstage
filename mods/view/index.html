@@ -161,7 +161,16 @@
 
 				if (meta.likes !== undefined) document.getElementById('like-count').textContent = `${meta.likes}`;
 
-				if (localStorage.getItem(`liked_${modId}`) === 'true') setLiked(true);
+				const token = localStorage.getItem('token');
+				if (token) {
+					const likeRes = await fetch(`${API}/submissions/${modId}/like`, {
+						headers: { 'Authorization': `Bearer ${token}` }
+					}).catch(() => null);
+					if (likeRes && likeRes.ok) {
+						const likeData = await likeRes.json().catch(() => null);
+						if (likeData && likeData.liked) setLiked(true);
+					}
+				}
 			}
 			populateData();
 
@@ -175,7 +184,6 @@
 				if (!token) return;
 				const newState = !liked;
 				setLiked(newState);
-				localStorage.setItem(`liked_${modId}`, newState ? 'true' : 'false');
 				const countEl = document.getElementById('like-count');
 				countEl.textContent = parseInt(countEl.textContent) + (newState ? 1 : -1);
 				await fetch(`${API}/submissions/${modId}/like`, {
@@ -183,7 +191,6 @@
 					headers: { 'Authorization': `Bearer ${token}` }
 				}).catch(() => {
 					setLiked(!newState);
-					localStorage.setItem(`liked_${modId}`, (!newState) ? 'true' : 'false');
 					countEl.textContent = parseInt(countEl.textContent) + (newState ? -1 : 1);
 				});
 			}
