@@ -48,6 +48,10 @@ function changeCategoryFilter(element) {
     toggleBox(document.getElementById('category-arrow'), 'mod-box-1');
 }
 
+function escapeHTML(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 function firstImageThumb(thumbnails) {
     return thumbnails.find(t => !/\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(t)) || thumbnails[0];
 }
@@ -178,8 +182,8 @@ async function reloadModList() {
                 ${isAdmin ? `<div class="mod-delete-btn" onclick="event.stopPropagation();deleteSubmission('${id}',this.closest('.mod-card'))">✕</div><div class="mod-star-btn" data-stars="${meta.stars ?? 0}" onclick="event.stopPropagation();setStars('${id}',${meta.stars ?? 0},this)">★ ${meta.stars ?? 0}</div>` : ''}
                 <img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
                 <div class="mod-label" style="margin-top:0;padding-top:0.3rem;">
-                    <h1 style="font-size: 3vh; margin:0; line-height:1.1; color:#E1E1E1;">${meta.title}</h1>
-                    <h1 style="font-size: 2vh; color: #C7C7C7; margin:0; line-height:1.1;">${meta.blurb}</h1>
+                    <h1 style="font-size: 3vh; margin:0; line-height:1.1; color:#E1E1E1;">${escapeHTML(meta.title)}</h1>
+                    <h1 style="font-size: 2vh; color: #C7C7C7; margin:0; line-height:1.1;">${escapeHTML(meta.blurb)}</h1>
                 </div>
                 <div class="mod-footer">
                     <div class="mod-footer-left">
