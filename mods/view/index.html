@@ -100,7 +100,7 @@
 				<div style="display: flex; gap: 0.35vw;">
 					<div id="downloads-box" class="ui-box" style="padding: 2vh; width: 33.333333%; justify-content: center;">
 					</div>
-					<div class="ui-box" style="padding: 2vh; width: 33.333333%">
+					<div id="like-box" class="ui-box" style="padding: 2vh; width: 33.333333%; justify-content: center; cursor: pointer;" onclick="toggleLike()">
 					</div>
 					<div class="ui-box" style="padding: 2vh; width: 33.333333%">
 					</div>
@@ -131,6 +131,12 @@
 				}
 			}
 
+			function fmtNum(n) {
+				if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+				if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+				return String(n);
+			}
+
 			async function populateData() {
 				const meta = await fetch(`${API}/submissions/${modId}/meta.json`).then(r => r.json());
 				const user = await fetch(`${API}/users/${meta.submitter}`).then(r => r.json());
@@ -152,8 +158,40 @@
 						<a style="font-size: 6vh">v${dlData.version}</a>
 					</div>`;
 				}
+
+				const token = localStorage.getItem('token');
+				let isLiked = false;
+				if (token) {
+					const meRes = await fetch(`${API}/me`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+						body: JSON.stringify({})
+					});
+					if (meRes.ok) {
+						const me = await meRes.json();
+						isLiked = (me.likedSubmissions ?? []).includes(modId);
+					}
+				}
+				const likeIcon = isLiked ? BASE + 'icon-like-filled.png' : BASE + 'icon-like-empty.png';
+				document.getElementById('like-box').innerHTML = `<div style="display: flex; gap: 0.5vw; align-items: center;">
+					<img draggable="false" id="like-icon" style="width: 5vh; height: 5vh" src="${likeIcon}"/>
+					<a id="like-count" style="font-size: 6vh">${fmtNum(meta.likes ?? 0)}</a>
+				</div>`;
 			}
 			populateData();
+
+			async function toggleLike() {
+				const token = localStorage.getItem('token');
+				if (!token) { window.location.href = '/login'; return; }
+				const res = await fetch(`${API}/submissions/${modId}/like`, {
+					method: 'POST',
+					headers: { 'Authorization': `Bearer ${token}` }
+				});
+				if (!res.ok) return;
+				const data = await res.json();
+				document.getElementById('like-icon').src = data.liked ? BASE + 'icon-like-filled.png' : BASE + 'icon-like-empty.png';
+				document.getElementById('like-count').textContent = fmtNum(data.likes);
+			}
 
 			function getActiveVideo() {
 				return document.querySelector('#thumbnail-' + activeSlot + ' video');
