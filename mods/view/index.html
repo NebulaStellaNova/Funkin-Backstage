@@ -161,7 +161,18 @@
 
 				if (meta.likes !== undefined) document.getElementById('like-count').textContent = `${meta.likes}`;
 
-				if (localStorage.getItem(`liked_${modId}`) === 'true') setLiked(true);
+				const token = localStorage.getItem('token');
+				if (token) {
+					const meRes = await fetch(`${API}/me`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+						body: JSON.stringify({})
+					}).catch(() => null);
+					if (meRes && meRes.ok) {
+						const meData = await meRes.json().catch(() => null);
+						if (meData && (meData.likedSubmissions ?? []).includes(modId)) setLiked(true);
+					}
+				}
 			}
 			populateData();
 
@@ -172,20 +183,15 @@
 
 			async function toggleLike() {
 				const token = localStorage.getItem('token');
-				if (!token) return;
-				const newState = !liked;
-				setLiked(newState);
-				localStorage.setItem(`liked_${modId}`, newState ? 'true' : 'false');
-				const countEl = document.getElementById('like-count');
-				countEl.textContent = parseInt(countEl.textContent) + (newState ? 1 : -1);
-				await fetch(`${API}/submissions/${modId}/like`, {
-					method: newState ? 'POST' : 'DELETE',
+				if (!token) { window.location.href = '/login'; return; }
+				const res = await fetch(`${API}/submissions/${modId}/like`, {
+					method: 'POST',
 					headers: { 'Authorization': `Bearer ${token}` }
-				}).catch(() => {
-					setLiked(!newState);
-					localStorage.setItem(`liked_${modId}`, (!newState) ? 'true' : 'false');
-					countEl.textContent = parseInt(countEl.textContent) + (newState ? -1 : 1);
 				});
+				if (!res.ok) return;
+				const data = await res.json();
+				setLiked(data.liked);
+				document.getElementById('like-count').textContent = data.likes;
 			}
 
 			function getActiveVideo() {
