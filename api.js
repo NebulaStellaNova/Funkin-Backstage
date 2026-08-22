@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.createElement('a');
     btn.href = '/';
     btn.id = 'home-btn';
-    btn.style.cssText = 'position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:9999;display:block;opacity:0.85;transition:opacity 0.2s,transform 0.2s;';
+    btn.style.cssText = 'position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:9999;display:block;opacity:0.25;transition:opacity 0.2s,transform 0.2s;';
     const img = document.createElement('img');
     img.draggable = false;
     img.src = `https://files.funkinbackstage.com/home_button.png`;
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.appendChild(img);
     btn.style.transformOrigin = 'right center';
     btn.addEventListener('mouseenter', () => { btn.style.opacity = '1'; btn.style.transform = 'translateY(-50%) scale(1.08)'; });
-    btn.addEventListener('mouseleave', () => { btn.style.opacity = '0.85'; btn.style.transform = 'translateY(-50%)'; });
+    btn.addEventListener('mouseleave', () => { btn.style.opacity = '0.25'; btn.style.transform = 'translateY(-50%)'; });
     document.body.appendChild(btn);
   }
 });
