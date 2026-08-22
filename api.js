@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     img.src = `https://files.funkinbackstage.com/home_button.png`;
     img.alt = 'Home';
     img.draggable = false;
-    img.style.cssText = 'height:10rem;display:block;';
-    if (window.innerWidth <= 768) img.style.height = '5rem';
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    img.style.cssText = `height:${isMobile ? '3.5rem' : '10rem'};display:block;`;
     btn.appendChild(img);
     btn.style.transformOrigin = 'right center';
     btn.addEventListener('mouseenter', () => { btn.style.opacity = '1'; btn.style.transform = 'translateY(-50%) scale(1.08)'; });
