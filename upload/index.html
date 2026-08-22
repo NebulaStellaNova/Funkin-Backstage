@@ -139,6 +139,108 @@
 		#ownership-rows .ownership-row:first-child .remove-owner-btn {
 			visibility: hidden;
 		}
+
+		@media (max-width: 768px) {
+			html, body {
+				height: auto;
+				min-height: 100%;
+				overflow-y: auto;
+			}
+
+			body {
+				justify-content: flex-start;
+				padding: 4rem 0 2rem;
+				box-sizing: border-box;
+			}
+
+			body > h1 {
+				position: static !important;
+				font-size: 4vh !important;
+				padding: 1rem 0 0.5rem;
+			}
+
+			.upload-container {
+				width: calc(100% - 2rem);
+			}
+
+			.tab-row {
+				flex-wrap: wrap;
+				padding-left: 0;
+			}
+
+			.tab-btn {
+				font-size: 2.5vh !important;
+				padding: 1vh 2.5vh !important;
+			}
+
+			.tab-panel {
+				padding: 3vh !important;
+				min-height: unset !important;
+			}
+
+			#tab-ownership {
+				height: 60vh !important;
+			}
+
+			.field-row {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 0.5rem;
+			}
+
+			.field-row .upload-label {
+				font-size: 2.5vh;
+			}
+
+			.input-wrap {
+				width: 100%;
+				box-sizing: border-box;
+			}
+
+			/* Engine/Category dropdowns stack vertically */
+			.field-row[style*="width: auto"] {
+				flex-direction: column;
+				align-items: flex-start;
+				width: 100% !important;
+			}
+
+			.upload-dd {
+				width: 100%;
+				min-width: unset;
+				box-sizing: border-box;
+			}
+
+			/* Media tab: keep label + button on same row, filename below */
+			#tab-media .field-row {
+				flex-direction: row;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 0.75rem;
+			}
+
+			#tab-media .field-row h1[id$="-label"] {
+				width: 100%;
+				font-size: 1.8vh;
+				margin: 0;
+			}
+
+			/* Ownership rows stack label/input pairs */
+			.ownership-row {
+				flex-direction: column;
+				align-items: stretch;
+				gap: 0.5rem;
+				padding-bottom: 1vh;
+				border-bottom: 1px solid rgba(255,255,255,0.1);
+			}
+
+			.ownership-row .upload-label {
+				font-size: 2vh;
+			}
+
+			.remove-owner-btn {
+				align-self: flex-end;
+			}
+		}
 	</style>
 </head>
 <body>
