@@ -113,11 +113,11 @@ img {
   font-weight: normal;
 }
 
-.mod-card {
+.mod-card, .mod-card:visited, .mod-card:hover {
   position: relative;
   aspect-ratio: 1241 / 1065;
   touch-action: manipulation;
-  color: inherit;
+  color: #E1E1E1;
 }
 
 .mod-delete-btn {
