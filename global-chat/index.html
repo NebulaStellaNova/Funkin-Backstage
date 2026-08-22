@@ -238,7 +238,7 @@
         let content = escapeHTML(`${message.contents}`.trim());
         const stickerOnly = content.startsWith(':') && content.endsWith(':');
         for (const sticker of stickerList) {
-            content = content.replace(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height:${stickerOnly ? '13' : '5'}vh;${stickerOnly ? '' : 'margin:1vh;margin-top:-1vh;'}"/>`);
+            content = content.replaceAll(`:${sticker}:`, `<img src="${API}/stickers/${sticker}.png" style="height:${stickerOnly ? '13' : '5'}vh;${stickerOnly ? '' : 'margin:1vh;margin-top:-1vh;'}"/>`);
         }
         return `<div style="display:flex;flex-direction:column;align-items:flex-start;gap:0rem;justify-content:start;">
             <div style="display:flex;justify-content:flex-start;align-items:center;gap:0.5vw">
