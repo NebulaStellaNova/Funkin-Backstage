@@ -55,6 +55,15 @@
 			.thumbnail-box:active {
 				background-color: rgba(255, 255, 225, 0.2);
 			}
+
+			.stat-icon {
+				height: 3.5vh;
+				margin-right: 0.5vh;
+			}
+			.stat-text {
+			
+				margin-right: 2vh;
+			}
 		</style>
 		<script>
 			var modId = sessionStorage.getItem('modId');
@@ -81,8 +90,8 @@
 					</div>
 					<div class="ui-box" style="padding: 0.5rem; width: 75%; height: 100%">
 						<div class="thumbnail-wrapper">
-							<div id="thumbnail-a" style="opacity: 1; position: absolute; inset: 0; transition: opacity 0.3s ease;"></div>
-							<div id="thumbnail-b" style="opacity: 0; position: absolute; inset: 0; transition: opacity 0.3s ease;"></div>
+							<div draggable="false" id="thumbnail-a" style="opacity: 1; position: absolute; inset: 0; transition: opacity 0.3s ease;"></div>
+							<div draggable="false" id="thumbnail-b" style="opacity: 0; position: absolute; inset: 0; transition: opacity 0.3s ease;"></div>
 							<div id="video-controls" style="display:none; position:absolute; bottom:10px; right:10px; z-index:10; gap:6px; flex-direction:row;">
 								<img id="btn-play" onclick="toggleVideoPlay()" draggable="false" src="https://funkinbackstage.com/mods/view/icon-playing.png" style="width:2.5vw; height:2.5vw; cursor:pointer; user-select:none; margin-left: -5.5vw;  margin-top: -2.6vw;">
 								<img id="btn-mute" onclick="toggleVideoMute()" draggable="false" src="https://funkinbackstage.com/mods/view/icon-muted.png" style="width:2.5vw; height:2.5vw; cursor:pointer; user-select:none; margin-left: -2.5vw;  margin-top: -2.6vw;">
@@ -109,7 +118,22 @@
 				</div>
 			</div>
 			<div style="width: 17.5vw;">
-				<div class="ui-box" style="width: 100%"></div>
+				<div class="ui-box" style="width: 100%; font-size: 3.8vh; display: flex; flex-direction: column; padding: 2.6vh">
+					<div style="display: flex;">
+						<img class="stat-icon" src="https://funkinbackstage.com/mods/assets/icon-download.png"/>
+						<a id="download-text" class="stat-text">1,000</a>
+						<img id="featured-icon" class="stat-icon" src="https://funkinbackstage.com/mods/assets/icon-featured.png"/>
+						<a id="featured-text">FEATURED</a>
+					</div>
+					<div style="display: flex;">
+						<img class="stat-icon" src="https://funkinbackstage.com/mods/assets/icon-views.png"/>
+						<a id="view-text" class="stat-text">1,000</a>
+						<img id="updated-icon" class="stat-icon" src="https://funkinbackstage.com/mods/assets/icon-updated.png"/>
+						<a id="updated-text" class="stat-text">1D</a>
+						<img id="added-icon" class="stat-icon" src="https://funkinbackstage.com/mods/assets/icon-plus.png"/>
+						<a id="added-text" class="">1D</a>
+					</div>
+				</div>
 			</div>
 		</div>
 		<script>
@@ -139,6 +163,26 @@
 				return String(n);
 			}
 
+			function relTime(dateStr) {
+				const diff = Date.now() - new Date(dateStr).getTime();
+				const s = Math.floor(diff / 1000);
+				if (s < 3600) return Math.max(1, Math.floor(s / 60)) + 'm';
+				if (s < 86400) return Math.floor(s / 3600) + 'h';
+				if (s < 2592000) return Math.floor(s / 86400) + 'd';
+				if (s < 31536000) return Math.floor(s / 2592000) + 'mo';
+				return Math.floor(s / 31536000) + 'y';
+			}
+
+
+			function timeAgo(dateStr) {
+				const s = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+				if (s < 3600)   { const m = Math.max(1, Math.floor(s / 60));    return m  + (m  === 1 ? ' minute ago' : ' minutes ago'); }
+				if (s < 86400)  { const h = Math.floor(s / 3600);               return h  + (h  === 1 ? ' hour ago'   : ' hours ago');   }
+				if (s < 2592000){ const d = Math.floor(s / 86400);              return d  + (d  === 1 ? ' day ago'    : ' days ago');    }
+				if (s < 31536000){ const mo = Math.floor(s / 2592000);          return mo + (mo === 1 ? ' month ago'  : ' months ago');  }
+				const y = Math.floor(s / 31536000); return y + (y === 1 ? ' year ago' : ' years ago');
+			}
+
 			async function populateData() {
 				const meta = await fetch(`${API}/submissions/${modId}/meta.json`).then(r => r.json());
 				const user = await fetch(`${API}/users/${meta.submitter}`).then(r => r.json());
@@ -163,6 +207,7 @@
 
 				const token = localStorage.getItem('token');
 				let isLiked = false;
+				let me = null;
 				if (token) {
 					const meRes = await fetch(`${API}/me`, {
 						method: 'POST',
@@ -170,8 +215,20 @@
 						body: JSON.stringify({})
 					});
 					if (meRes.ok) {
-						const me = await meRes.json();
+						me = await meRes.json();
 						isLiked = (me.likedSubmissions ?? []).includes(modId);
+					}
+				}
+
+				const viewedKey = `viewed_${modId}`;
+				if (!sessionStorage.getItem(viewedKey)) {
+					const isOwner = me && me.id === meta.submitter;
+					if (!isOwner) {
+						fetch(`${API}/submissions/${modId}/view`, {
+							method: 'POST',
+							headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+						});
+						sessionStorage.setItem(viewedKey, '1');
 					}
 				}
 				const likeIcon = isLiked ? BASE + 'icon-like-filled.png' : BASE + 'icon-like-empty.png';
@@ -182,6 +239,33 @@
 
 				document.getElementById('category-text').textContent = "Category";
 				document.getElementById('engine-text').textContent = `${meta.parent.replace('-', ' ')} - ${meta.child.replace('-', ' ')}`;
+				
+				if (meta.stars == 0) {
+					if (meta.updateDate == "") {
+						document.getElementById('featured-text').remove();
+						document.getElementById('featured-icon').remove();
+					} else {
+						document.getElementById('featured-text').innerHTML = timeAgo(meta.updateDate);
+						document.getElementById('featured-icon').src = "https://funkinbackstage.com/mods/assets/icon-updated.png";
+					}
+					document.getElementById('updated-icon').remove();
+					document.getElementById('updated-text').remove();
+					
+					document.getElementById('added-text').innerHTML = timeAgo(meta.uploadDate);
+				} else {
+					if (meta.updateDate == "") {
+						document.getElementById('updated-icon').remove();
+						document.getElementById('updated-text').remove();
+						document.getElementById('added-text').innerHTML = timeAgo(meta.uploadDate);
+					} else {
+						document.getElementById('added-text').innerHTML = relTime(meta.uploadDate);
+						document.getElementById('updated-text').innerHTML = relTime(meta.updateDate);
+					}
+					document.getElementById('featured-text').innerHTML = 'FEATURED';
+				}
+
+				document.getElementById('download-text').textContent = meta.downloads.toLocaleString('en-US');
+				document.getElementById('view-text').textContent = meta.views.toLocaleString('en-US');
 			}
 			populateData();
 
