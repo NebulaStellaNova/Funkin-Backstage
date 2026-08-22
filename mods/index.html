@@ -151,8 +151,17 @@
 				<h1 style="font-size: 2.5vh; color: #E1E1E1; margin-top: 0.3vh">UPLOAD</h1>
 				<img src="../icon-upload.png" style="height: 2.5vh; width: 2.5vh; margin-top: -0.4rem; margin-right: 0.6rem"/>
 			</div>
-			
 			<img class="smooth-btn" src="../icon-profile-out.png" style="transition: transform 0.3s ease-out, height 0.3s ease; height: 7vh; cursor: pointer;"/>
 		</div>
+		<script>
+			if (!localStorage.getItem('token')) {
+				const bar = document.getElementById('top-bar');
+				bar.innerHTML = `
+					<div class="mod-box smooth-btn" onclick="window.location.href='../signup'" style="display:flex;flex-direction:row;align-items:center;gap:1rem;height:5vh;transition:transform 0.3s ease-out;cursor:pointer;">
+						<h1 style="font-size:2.5vh;color:#E1E1E1;margin-top:0.3vh;padding:0 1rem;">SIGN UP</h1>
+					</div>
+				`;
+			}
+		</script>
 	</body>
 </html>
