@@ -28,14 +28,15 @@
       background-image: url('scroll-bar-bg.png');
       background-repeat: no-repeat;
       background-size: auto 100%;
-      background-position: right center;
+      background-position: center;
       cursor: pointer;
     }
     #scroll-thumb {
       position: absolute;
       width: 80px;
       height: 80px;
-      right: 0;
+      left: 50%;
+      transform: translateX(-50%);
       background-image: url('scroll-bar-track.png');
       background-repeat: no-repeat;
       background-size: contain;
