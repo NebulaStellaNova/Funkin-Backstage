@@ -190,6 +190,14 @@ img {
     margin-left: 0;
   }
 
+  .mod-card {
+    overflow: hidden;
+  }
+
+  .mod-box {
+    border-image: url('assets/box base.png') 18 fill / 7px stretch;
+  }
+
   .mod-label {
     position: relative;
     margin-top: 0.5vh;
