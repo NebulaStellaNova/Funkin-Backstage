@@ -120,6 +120,22 @@ img {
   color: #E1E1E1;
 }
 
+.mod-star-btn {
+  position: absolute;
+  top: 0.5rem;
+  left: 3.5rem;
+  z-index: 3;
+  background: rgba(180, 140, 0, 0.85);
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  font-size: 1.8vh;
+  font-family: 'FunkinLingLong', sans-serif;
+  line-height: 1;
+  user-select: none;
+}
+
 .mod-delete-btn {
   position: absolute;
   top: 0.5rem;
