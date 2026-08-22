@@ -178,7 +178,7 @@ async function reloadModList() {
                 ${isAdmin ? `<div class="mod-delete-btn" onclick="event.stopPropagation();deleteSubmission('${id}',this.closest('.mod-card'))">✕</div>` : ''}
                 <img draggable="false" src="assets/mod capsule.png" class="mod-capsule">
                 <div class="mod-label" style="margin-top:0;padding-top:0.3rem;">
-                    <h1 style="font-size: 3vh; margin:0; line-height:1.1;">${meta.title}</h1>
+                    <h1 style="font-size: 3vh; margin:0; line-height:1.1; color:#E1E1E1;">${meta.title}</h1>
                     <h1 style="font-size: 2vh; color: #C7C7C7; margin:0; line-height:1.1;">${meta.blurb}</h1>
                 </div>
                 <div class="mod-footer">
