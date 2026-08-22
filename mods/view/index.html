@@ -61,8 +61,13 @@
 				margin-right: 0.5vh;
 			}
 			.stat-text {
-			
+
 				margin-right: 2vh;
+			}
+
+			#title-box img {
+				height: 7vh;
+				width: auto;
 			}
 		</style>
 		<script>
@@ -83,7 +88,7 @@
 		<script src="../../api.js"></script>
 		<div style="display: flex; gap: 1vw;">
 			<div style="display: flex; flex-direction: column; width: 55.5vw; gap: 1vh;">
-				<div class="ui-box" style="padding: 3vh; padding-left: 2vw; width: 100%"><a id="title-text" style="font-size: 7vh;"></a> <a id="author-text" style="margin-left: 2vh; margin-top: 1vh;font-size: 5vh; color: #C7C7C7; font-family: 'FunkinOptions', sans-serif;"></a></div>
+				<div id="title-box" class="ui-box" style="padding: 3vh; padding-left: 2vw; width: 100%;"><a id="title-text" style="font-size: 7vh;"></a> <a id="author-text" style="margin-left: 2vh; margin-top: 1vh;font-size: 5vh; color: #C7C7C7; font-family: 'FunkinOptions', sans-serif;"></a></div>
 				<div class="ui-box" style="padding: 0vh; padding-left: 0; width: 100%; height: 23.7vw">
 					<div class="thumbnail-box thumbnail-box-left" style="width: 12.5%; height: 100%; display:flex; justify-content: center; align-items: center;" onclick="scrollThumbnail(-1)">
 						<img draggable="false" src="https://funkinbackstage.com/mods/view/arrow.png" style="height: 10vw; margin-left: 1vw"/>
@@ -195,6 +200,10 @@
 				document.getElementById('author-text').textContent = `• ${user.username}`;
 				document.getElementById('mod-description').innerHTML = meta.description.replace(/\n/g, "<br>");
 				setSlot('thumbnail-a', meta.thumbnails[0]);
+
+				if (meta.icon != "") {
+					document.getElementById('title-box').innerHTML = `<img src="${meta.icon}" style="height: 7vh; width: auto; margin-right: 2vh; margin-top: 0; margin-bottom: 0; padding: 0"/>` + document.getElementById('title-box').innerHTML;
+				}
 
 				thumbnails = meta.thumbnails;
 				for (const thumb of thumbnails)
