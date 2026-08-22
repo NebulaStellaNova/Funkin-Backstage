@@ -117,7 +117,7 @@
 					</div>
 				</div>
 			</div>
-			<div style="width: 17.5vw;">
+			<div style="display: flex; flex-direction: column; gap: 1vh; width: 17.5vw;">
 				<div class="ui-box" style="width: 100%; font-size: 3.8vh; display: flex; flex-direction: column; padding: 2.6vh">
 					<div style="display: flex;">
 						<img class="stat-icon" src="https://funkinbackstage.com/mods/assets/icon-download.png"/>
@@ -133,6 +133,10 @@
 						<img id="added-icon" class="stat-icon" src="https://funkinbackstage.com/mods/assets/icon-plus.png"/>
 						<a id="added-text" class="">?</a>
 					</div>
+				</div>
+				
+				<div id="contributors-panel" class="ui-box" style="width: 100%; font-size: 3.8vh; display: flex; flex-direction: column; padding: 2vh; gap: 1vh">
+
 				</div>
 			</div>
 		</div>
@@ -266,6 +270,13 @@
 
 				document.getElementById('download-text').textContent = meta.downloads.toLocaleString('en-US');
 				document.getElementById('view-text').textContent = meta.views.toLocaleString('en-US');
+
+				for (const contributor of meta.contributors) {
+					document.getElementById('contributors-panel').innerHTML += `<div style="display: flex; flex-direction: column; width: 100%">
+						<a style="font-size: 3vh;${`${contributor.role}`.toLowerCase().includes("director") ? " color: #fff596;" : ""}">${contributor.name}</a>
+						<a style="font-size: 2.5vh; color: #bababa">${contributor.role}</a>
+					</div>`;
+				}
 			}
 			populateData();
 
